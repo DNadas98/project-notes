@@ -1,0 +1,62 @@
+/*Css reset*/
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  box-shadow: none;
+  text-decoration: none;
+  list-style: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: transparent;
+  color: inherit;
+}
+
+body {
+  --light: aliceblue;
+  --mid: steelblue;
+  --dark: rgb(10, 20, 30);
+  --invalidInput: rgba(178, 34, 34, 0.5);
+  --transitionspeed: 0.2s;
+
+  background-color: var(--dark);
+  color: var(--light);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+body h1 {
+  padding: 20px;
+}
+
+input,
+button {
+  padding: 10px 20px;
+  text-align: flex-end;
+  border: 2px solid var(--light);
+  border-radius: 3px;
+  min-width: 120px;
+  transition: var(--transitionspeed);
+}
+input:hover,
+input:focus,
+button:hover {
+  background-color: var(--light);
+  color: var(--dark);
+}
+input:active,
+button:active {
+  opacity: 0.8;
+}
