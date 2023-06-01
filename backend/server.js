@@ -11,6 +11,7 @@ const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 const rootRouter = require("./routes/root.js");
 const usersRouter = require("./routes/api/users.js");
+const notesRouter = require("./routes/api/notes.js");
 
 const server = express();
 
@@ -34,6 +35,7 @@ server.use(logRequest);
 //Routing
 server.use("/", rootRouter);
 server.use("/users", usersRouter);
+server.use("/notes", notesRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {

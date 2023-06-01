@@ -1,38 +1,3 @@
-# Express server
-
-- https://github.com/DNadas98/express_server
-
-# Routes
-
-### Root
-
-- GET `^/$|/index(.html)?`: Home page
-- GET `/old(.html)?`: Test redirect
-- GET `/error`: Test 500 error
-
-### API `/users`
-
-- GET `/`: Read all users
-- POST `/`: Create user
-- PATCH `/`: Update user
-- DELETE `/`: Delete user
-
-### API `/notes`
-
-- GET `/`: Read all notes
-- POST `/`: Create note
-- PATCH `/`: Update note
-- DELETE `/`: Delete note
-
-# Database
-
-- mongoDB local
-- projectsdb
-
-# Dotenv
-
-- `backend/config/config.env`
-
 # New info
 
 ### Dotenv:
