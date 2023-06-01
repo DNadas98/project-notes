@@ -1,5 +1,6 @@
 const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
+const { isValidObjectId } = require("mongoose");
 
 //GET /notes
 async function getNotesOfUser(req, res, next) {
@@ -7,6 +8,9 @@ async function getNotesOfUser(req, res, next) {
     const { userid } = req.body;
     if (!userid) {
       return res.status(400).json({ message: "User ID is required" });
+    }
+    if (!isValidObjectId(userid)) {
+      return res.status(400).json({ message: "Invalid user ID" });
     }
     const notes = await Note.find({ userid }).lean();
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
