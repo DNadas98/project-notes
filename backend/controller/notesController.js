@@ -1,8 +1,25 @@
-const User = require("../model/schemas/User");
 const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 
 //GET /notes
+async function getNotesOfUser(req, res, next) {
+  try {
+    const { userid } = req.body;
+    if (!userid) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const notes = await Note.find({ userid }).lean();
+    if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
+      return res.status(404).json({ message: "No notes found" });
+    }
+    res.json(notes);
+  } catch (err) {
+    logError(err, req);
+    next(err);
+  }
+}
+
+//GET /notes/all
 async function getAllNotes(req, res, next) {
   try {
     const notes = await Note.find().lean();
@@ -85,4 +102,4 @@ async function deleteNote(req, res, next) {
   }
 }
 
-module.exports = { getAllNotes, createNote, updateNote, deleteNote };
+module.exports = { getNotesOfUser, getAllNotes, createNote, updateNote, deleteNote };
