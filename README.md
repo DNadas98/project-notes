@@ -6,3 +6,7 @@
 
 - mongoDB local
 - projectsdb
+
+# Dotenv
+
+- https://youtu.be/cUV3uYXEOxI?list=PL0Zuz27SZ-6P4dQUsoDatjEGpmBpcOW8V&t=101

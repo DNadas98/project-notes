@@ -1,5 +1,5 @@
+require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/dbConnection");
 const path = require("path");
@@ -7,10 +7,10 @@ const rateLimiter = require("./config/rateLimiter");
 const helmet = require("helmet");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
+const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 
 const server = express();
-const PORT = process.env.PORT || 3000;
 
 //Security middleware
 server.use(helmet());
@@ -20,11 +20,11 @@ server.use(rateLimiter);
 server.use(cors(corsOptions));
 
 //Built-in middleware to handle form data, JSON and static files
-server.use(cookieParser);
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
+server.use(cookieParser());
 
-server.use(express.static(path.join(__dirname, "..", "frontend", "public")));
+server.use("/public", express.static(path.join(__dirname, "..", "frontend", "public")));
 
 //Request logger middleware
 server.use(logRequest);
@@ -42,6 +42,7 @@ server.use("/error", (req, res, next) => {
 });
 
 //404 - Not Found
+// eslint-disable-next-line no-unused-vars
 server.use((req, res, next) => {
   res.status(404);
   logServed(req, res);
@@ -55,6 +56,7 @@ server.use((req, res, next) => {
 });
 
 //500 - Internal Server Error
+// eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500);
@@ -72,8 +74,8 @@ server.use((err, req, res, next) => {
 dbConnection();
 mongoose.connection.once("open", () => {
   console.log(`Connected to mongoDB`);
-  server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}\nhttp://127.0.0.1:${PORT}`);
+  server.listen(process.env.PORT, () => {
+    console.log(`Server running on port ${process.env.PORT}\nhttp://127.0.0.1:${process.env.PORT}`);
   });
 });
 mongoose.connection.on("error", (err) => {

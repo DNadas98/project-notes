@@ -1,12 +1,9 @@
 const mongoose = require("mongoose");
 const { logError } = require("../middleware/logger");
 
-const DB = "projectsdb";
-const connectionString = `mongodb://127.0.0.1:27017/${DB}?retryWrites=true`;
-
 const dbConnection = async () => {
   try {
-    await mongoose.connect(connectionString, {
+    await mongoose.connect(process.env.DB_CONN_STR, {
       useUnifiedTopology: true,
       useNewUrlParser: true
     });
