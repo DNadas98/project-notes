@@ -9,6 +9,8 @@ const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
+const rootRouter = require("./routes/root.js");
+const usersRouter = require("./routes/api/users.js");
 
 const server = express();
 
@@ -30,28 +32,24 @@ server.use("/public", express.static(path.join(__dirname, "..", "frontend", "pub
 server.use(logRequest);
 
 //Routing
-server.use("/", require("./routes/root.js"));
-
-//test error
-server.use("/error", (req, res, next) => {
-  try {
-    throw new Error("Test error");
-  } catch (err) {
-    next(err);
-  }
-});
+server.use("/", rootRouter);
+server.use("/users", usersRouter);
 
 //404 - Not Found
-// eslint-disable-next-line no-unused-vars
 server.use((req, res, next) => {
-  res.status(404);
-  logServed(req, res);
-  if (req.accepts("text/html")) {
-    res.sendFile(path.join(__dirname, "..", "frontend", "views", "404.html"));
-  } else if (req.accepts("application/json")) {
-    res.json({ "ERROR": "404 Not Found" });
-  } else {
-    res.send("404 - Not Found");
+  try {
+    res.status(404);
+    logServed(req, res);
+    if (req.accepts("text/html")) {
+      res.sendFile(path.join(__dirname, "..", "frontend", "views", "404.html"));
+    } else if (req.accepts("application/json")) {
+      res.json({ "ERROR": "404 Not Found" });
+    } else {
+      res.send("404 - Not Found");
+    }
+  } catch (err) {
+    logError(err, req);
+    next(err);
   }
 });
 

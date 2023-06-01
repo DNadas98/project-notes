@@ -10,6 +10,7 @@
   "author": "Daniel Nadas",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
@@ -18,7 +19,9 @@
     "express-rate-limit": "^6.7.0",
     "helmet": "^6.1.5",
     "mongoose": "^7.2.2",
-    "path": "^0.12.7"
+    "mongoose-sequence": "^5.3.1",
+    "path": "^0.12.7",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "eslint": "^8.39.0",

@@ -8,7 +8,6 @@ const dbConnection = async () => {
       useNewUrlParser: true
     });
   } catch (err) {
-    console.error(err);
     logError(err);
   }
 };
