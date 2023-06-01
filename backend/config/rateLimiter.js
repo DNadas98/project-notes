@@ -1,13 +1,10 @@
 const rateLimit = require("express-rate-limit");
-
-const skipSameOrigin = (req) => {
-  return req.headers.origin === req.headers.referer;
-};
+const allowedOrigins = require("./allowedOrigins");
 
 const rateLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 200,
-  skip: skipSameOrigin
+  skip: (req, res) => allowedOrigins.includes(req.origin) || !req.origin
 });
 
 module.exports = rateLimiter;
