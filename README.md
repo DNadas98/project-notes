@@ -33,6 +33,10 @@
 
 - `backend/config/config.env`
 
+# Frontend
+
+### React router
+
 # New info
 
 ### Dotenv:
@@ -71,4 +75,15 @@
   ```js
   const autoIncrement = require("mongoose-sequence")(mongoose);
   noteSchema.plugin(autoIncrement, { inc_field: "ticket", id: "ticketNums", start_seq: 1 });
+  ```
+
+### React
+
+- react router:
+  ```js
+  <BrowserRouter>
+    <Routes>
+      <Route path="/*" element={<App />} />
+    </Routes>
+  </BrowserRouter>
   ```

@@ -1,0 +1,21 @@
+import { Link } from "react-router-dom";
+import React from "react";
+
+function Public() {
+  return (
+    <section className="public_welcome_section">
+      <p>
+        Project Notes is a MERN stack web application built mainly to practice MERN stack, however the app can actually
+        be useful for creating and storing notes, user stories and other information for different projects.
+      </p>
+      <div className="inline">
+        <h2>Please log in to access your projects</h2>
+        <Link to="/login">
+          <button>Log in</button>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+export default Public;

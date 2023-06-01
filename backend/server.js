@@ -27,7 +27,7 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(cookieParser());
 
-server.use("/public", express.static(path.join(__dirname, "..", "frontend", "public")));
+server.use("/public", express.static(path.join(__dirname, "..", "frontend_plainjs", "public")));
 
 //Request logger middleware
 server.use(logRequest);
@@ -43,7 +43,7 @@ server.use((req, res, next) => {
     res.status(404);
     logServed(req, res);
     if (req.accepts("text/html")) {
-      res.sendFile(path.join(__dirname, "..", "frontend", "views", "404.html"));
+      res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "404.html"));
     } else if (req.accepts("application/json")) {
       res.json({ "ERROR": "404 Not Found" });
     } else {
@@ -62,7 +62,7 @@ server.use((err, req, res, next) => {
   res.status(500);
   logError(err, req);
   if (req.accepts("text/html")) {
-    res.sendFile(path.join(__dirname, "..", "frontend", "views", "500.html"));
+    res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "500.html"));
   } else if (req.accepts("application/json")) {
     res.json({ "ERROR": "500 Internal Server Error" });
   } else {

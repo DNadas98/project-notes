@@ -7,7 +7,7 @@ const router = express.Router();
 router.get("^/$|/index(.html)?", (req, res, next) => {
   try {
     logServed(req, res);
-    res.sendFile(path.join(__dirname, "..", "..", "frontend", "views", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "..", "frontend_plainjs", "views", "index.html"));
   } catch (err) {
     logError(err, req);
     next(err);
