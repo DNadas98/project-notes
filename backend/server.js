@@ -1,4 +1,5 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/dbConnection");
 const path = require("path");
@@ -9,7 +10,7 @@ const corsOptions = require("./config/corsOptions");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 
 const server = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 //Security middleware
 server.use(helmet());
@@ -19,8 +20,10 @@ server.use(rateLimiter);
 server.use(cors(corsOptions));
 
 //Built-in middleware to handle form data, JSON and static files
-//server.use(express.urlencoded({ extended: true }));
+server.use(cookieParser);
+server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
+
 server.use(express.static(path.join(__dirname, "..", "frontend", "public")));
 
 //Request logger middleware
@@ -38,7 +41,7 @@ server.use("/error", (req, res, next) => {
   }
 });
 
-//404
+//404 - Not Found
 server.use((req, res, next) => {
   res.status(404);
   logServed(req, res);
@@ -51,7 +54,7 @@ server.use((req, res, next) => {
   }
 });
 
-//500
+//500 - Internal Server Error
 server.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500);

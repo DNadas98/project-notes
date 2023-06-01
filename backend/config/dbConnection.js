@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
-const connectionString = "mongodb://127.0.0.1:27017/projectsdb?retryWrites=true&w=majority";
+const { logError } = require("../middleware/logger");
+
+const DB = "projectsdb";
+const connectionString = `mongodb://127.0.0.1:27017/${DB}?retryWrites=true`;
 
 const dbConnection = async () => {
   try {
@@ -9,6 +12,7 @@ const dbConnection = async () => {
     });
   } catch (err) {
     console.error(err);
+    logError(err);
   }
 };
 

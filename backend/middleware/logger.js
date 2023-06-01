@@ -15,6 +15,7 @@ function logServed(req, res) {
   const logName = "servedLog.txt";
   logEvents(message, logName);
 }
+
 function logError(err, req) {
   const reqString = req ? `\t${req.method}\t${req.originalUrl}\t${req.url}\t${req.ip}` : "";
   const message = `Error: ${err.message}${reqString}`;
