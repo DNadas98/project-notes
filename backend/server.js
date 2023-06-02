@@ -13,6 +13,7 @@ const rootRouter = require("./routes/root.js");
 const authRouter = require("./routes/api/auth.js");
 const usersRouter = require("./routes/api/users.js");
 const notesRouter = require("./routes/api/notes.js");
+const verifyJWT = require("./middleware/auth/verifyJWT");
 
 const server = express();
 
@@ -36,8 +37,8 @@ server.use(logRequest);
 //Routing
 server.use("/", rootRouter);
 server.use("/auth", authRouter);
-server.use("/users", usersRouter);
-server.use("/notes", notesRouter);
+server.use("/users", verifyJWT, usersRouter);
+server.use("/notes", verifyJWT, notesRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {

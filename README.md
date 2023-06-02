@@ -45,6 +45,14 @@
   ```js
   require("dotenv").config({ path: "backend/config/config.env" });
   ```
+- Secret keys:
+  - ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET
+  - `node` (terminal)
+  - `require("crypto").randomBytes(64).toString("hex")`
+
+### JWT
+
+-
 
 ### Mongo/mongoose
 

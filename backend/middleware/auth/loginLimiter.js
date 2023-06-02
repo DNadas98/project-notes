@@ -1,6 +1,6 @@
 const rateLimit = require("express-rate-limit");
-const allowedOrigins = require("../config/allowedOrigins");
-const { logError } = require("./logger");
+const allowedOrigins = require("../../config/allowedOrigins");
+const { logError } = require("../logger");
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
