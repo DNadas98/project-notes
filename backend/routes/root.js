@@ -15,7 +15,7 @@ router.get("^/$|/index(.html)?", (req, res, next) => {
 });
 
 //test error
-router.use("/error", (req, res, next) => {
+router.use("/err", (req, res, next) => {
   try {
     throw new Error("Test error");
   } catch (err) {

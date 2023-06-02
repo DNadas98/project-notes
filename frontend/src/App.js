@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import Public from "./components/Public";
 import ApiLayout from "./components/ApiLayout";
 import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
 import Welcome from "./components/auth/Welcome";
 import NotesList from "./components/notes/NotesList";
 import UsersList from "./components/users/UsersList";
@@ -18,6 +19,7 @@ function App() {
           {/*public*/}
           <Route index element={<Public />} />
           <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
           {/*restricted*/}
           <Route path="api" element={<ApiLayout />}>
             <Route index element={<Welcome />} />
