@@ -3,13 +3,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/dbConnection");
 const path = require("path");
-const rateLimiter = require("./config/rateLimiter");
+const rateLimiter = require("./middleware/rateLimiter");
 const helmet = require("helmet");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 const rootRouter = require("./routes/root.js");
+const authRouter = require("./routes/api/auth.js");
 const usersRouter = require("./routes/api/users.js");
 const notesRouter = require("./routes/api/notes.js");
 
@@ -34,6 +35,7 @@ server.use(logRequest);
 
 //Routing
 server.use("/", rootRouter);
+server.use("/auth", authRouter);
 server.use("/users", usersRouter);
 server.use("/notes", notesRouter);
 
