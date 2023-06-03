@@ -16,7 +16,7 @@ async function getNotesOfUser(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    res.json(notes);
+    res.status(200).json(notes);
   } catch (err) {
     logError(err, req);
     next(err);
@@ -30,7 +30,7 @@ async function getAllNotes(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    res.json(notes);
+    res.status(200).json(notes);
   } catch (err) {
     logError(err, req);
     next(err);
@@ -80,7 +80,7 @@ async function updateNote(req, res, next) {
     note.text = text;
     note.completed = completed;
     const updatedNote = await note.save();
-    res.json({ message: `${updatedNote.title} updated successfully` });
+    res.status(200).json({ message: `${updatedNote.title} updated successfully` });
   } catch (err) {
     logError(err, req);
     next(err);
@@ -99,7 +99,7 @@ async function deleteNote(req, res, next) {
       return res.status(404).json({ message: "Note not found" });
     }
     const result = await note.deleteOne();
-    res.json({ message: `Note with title ${result.title} with ID ${result._id} deleted successfully` });
+    res.status(200).json({ message: `Note with title ${result.title} with ID ${result._id} deleted successfully` });
   } catch (err) {
     logError(err, req);
     next(err);

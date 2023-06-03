@@ -10,7 +10,7 @@ async function getAllUsers(req, res, next) {
     if (!users || !Array.isArray(users) || !users.length >= 1) {
       return res.status(404).json({ message: "No users found" });
     }
-    res.json(users);
+    res.status(200).json(users);
   } catch (err) {
     logError(err, req);
     next(err);
@@ -64,7 +64,7 @@ async function updateUser(req, res, next) {
       user.password = await bcrypt.hash(password, 10);
     }
     const updatedUser = await user.save();
-    res.json({ message: `${updatedUser.username} updated successfully` });
+    res.status(200).json({ message: `${updatedUser.username} updated successfully` });
   } catch (err) {
     logError(err, req);
     next(err);
@@ -87,7 +87,7 @@ async function deleteUser(req, res, next) {
       return res.status(404).json({ message: "User not found" });
     }
     const result = await user.deleteOne();
-    res.json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
+    res.status(200).json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
   } catch (err) {
     logError(err, req);
     next(err);

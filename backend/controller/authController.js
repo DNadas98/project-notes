@@ -37,7 +37,7 @@ async function login(req, res, next) {
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN //refresh token expiresIn
     });
     //client app never handles refresh token, only the server
-    res.json({ accessToken });
+    res.status(200).json({ accessToken });
   } catch (err) {
     logError(err, req);
     next(err);
@@ -61,7 +61,7 @@ async function refresh(req, res, next) {
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
         );
-        res.json(accessToken);
+        res.status(200).json(accessToken);
       } catch (err) {
         return res.status(403).json({ message: "Forbidden" });
       }
@@ -78,7 +78,7 @@ async function logout(req, res, next) {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.status(204).json({ message: "No content" });
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-    res.json({ message: "Logout successful" });
+    res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     logError(err, req);
     next(err);
