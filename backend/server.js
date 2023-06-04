@@ -14,9 +14,7 @@ const verifyRoles = require("./middleware/auth/verifyRoles");
 const rootRouter = require("./routes/root.js");
 const authRouter = require("./routes/api/auth.js");
 const userRouter = require("./routes/api/user.js");
-/*
 const notesRouter = require("./routes/api/notes.js");
-*/
 const adminRouter = require("./routes/api/admin.js");
 
 const server = express();
@@ -42,9 +40,7 @@ server.use(logRequest);
 server.use("/", rootRouter);
 server.use("/auth", authRouter);
 server.use("/users", userRouter);
-/*
-server.use("/notes", notesRouter);
-*/
+server.use("/notes", verifyJWT, notesRouter);
 server.use("/admin", verifyJWT, (req, res, next) => verifyRoles(req, res, next, ["Admin"]), adminRouter);
 
 //404 - Not Found
