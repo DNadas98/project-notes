@@ -1,5 +1,5 @@
 const rateLimit = require("express-rate-limit");
-const allowedOrigins = require("../config/allowedOrigins");
+const allowedOrigins = require("../config/corsAllowedOrigins");
 const { logError } = require("./logger");
 
 const rateLimiter = rateLimit({

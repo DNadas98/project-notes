@@ -1,16 +1,14 @@
 require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
 const mongoose = require("mongoose");
-const dbConnection = require("./config/dbConnection");
-const rateLimiter = require("./middleware/rateLimiter");
+const connectToDatabase = require("./config/dbConnection");
 const helmet = require("helmet");
+const rateLimiter = require("./middleware/rateLimiter");
+const banned = require("./middleware/banned");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
-const verifyJWT = require("./middleware/auth/verifyJWT");
-const verifyUser = require("./middleware/auth/verifyUser");
-const verifyRoles = require("./middleware/auth/verifyRoles");
 const authRouter = require("./routes/api/auth.js");
 const userRouter = require("./routes/api/user.js");
 const notesRouter = require("./routes/api/notes.js");
@@ -21,9 +19,10 @@ const server = express();
 //Security middleware
 server.use(helmet());
 server.use(rateLimiter);
+server.use(banned);
 
 //CORS
-server.use(cors(corsOptions));
+server.use(cors(corsOptions)); //!origin ONLY for developement
 
 //Built-in middleware to handle form data, JSON and static files
 server.use(express.urlencoded({ extended: true }));
@@ -36,17 +35,17 @@ server.use(logRequest);
 //Routing
 server.use("/auth", authRouter);
 server.use("/users", userRouter);
-server.use("/notes", verifyJWT, verifyUser, notesRouter);
-server.use("/admin", verifyJWT, verifyUser, (req, res, next) => verifyRoles(req, res, next, ["Admin"]), adminRouter);
+server.use("/notes", notesRouter);
+server.use("/admin", adminRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {
   try {
     logServed(req, res);
     if (req.accepts("application/json")) {
-      res.status(404).json({ message: "404 - Not Found" });
+      res.status(404).json({ message: "Not Found" });
     } else {
-      res.status(404).send("404 - Not Found");
+      res.status(404).send("Not Found");
     }
   } catch (err) {
     logError(err, req);
@@ -59,14 +58,14 @@ server.use((req, res, next) => {
 server.use((err, req, res, next) => {
   logError(err, req);
   if (req.accepts("application/json")) {
-    res.status(500).json({ message: "500 - Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   } else {
-    res.status(500).send("500 - Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 });
 
-//Start db, server
-dbConnection();
+//Connect to db, start server
+connectToDatabase();
 mongoose.connection.once("open", () => {
   console.log(`Connected to mongoDB`);
   server.listen(process.env.PORT, () => {

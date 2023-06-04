@@ -1,18 +1,10 @@
 const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
-const { isValidObjectId } = require("mongoose");
 
 //GET /notes
 async function getNotes(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at getNotes");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    if (!isValidObjectId(userid)) {
-      return res.status(400).json({ message: "Invalid user ID" });
-    }
     const notes = await Note.find({ userid }).lean();
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
@@ -28,10 +20,6 @@ async function getNotes(req, res, next) {
 async function createNote(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at createNote");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const { title, text } = req.body;
     if (!title || !text) {
       return res.status(400).json({ message: "All fields are required" });
@@ -56,10 +44,6 @@ async function createNote(req, res, next) {
 async function updateNote(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at updateNote");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const { id, title, text, completed } = req.body;
     if (!id || !title || !text || typeof completed != "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
@@ -90,10 +74,6 @@ async function updateNote(req, res, next) {
 async function deleteNote(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at deleteNote");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const { id } = req.body;
     if (!id) {
       return res.status(400).json({ message: "Note ID required" });

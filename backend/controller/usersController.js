@@ -7,10 +7,6 @@ const bcrypt = require("bcrypt");
 async function getUserData(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at getUserData");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const user = await User.findById(userid).select("-_id -password -active").lean();
     if (!user) {
       console.warn("verifyJWT failed at getUserData");
@@ -52,10 +48,6 @@ async function updateUser(req, res, next) {
   try {
     const { newUsername, newPassword } = req.body;
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at updateUser");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     if (!newUsername && !newPassword) {
       return res.status(400).json({ message: "Nothing to change" });
     }
@@ -89,10 +81,6 @@ async function updateUser(req, res, next) {
 async function deleteUser(req, res, next) {
   try {
     const userid = req.userid;
-    if (!userid) {
-      console.warn("verifyJWT failed at deleteUser");
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     const user = await User.findById(userid).exec();
     if (!user) {
       console.warn("verifyJWT failed at deleteUser");
