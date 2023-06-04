@@ -4,12 +4,7 @@ const verifyJWT = require("../../middleware/auth/verifyJWT");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(verifyJWT, getNotesOfUser)
-  .post(verifyJWT, createNote)
-  .patch(verifyJWT, updateNote)
-  .delete(verifyJWT, deleteNote);
+router.route("/").use(verifyJWT).get(getNotesOfUser).post(createNote).patch(updateNote).delete(deleteNote);
 router.get("/all", verifyJWT, getAllNotes);
 
 module.exports = router;

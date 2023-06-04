@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { logError } = require("../logger");
 
-const verifyJWT = (req, res, next) => {
+function verifyJWT(req, res, next) {
   try {
     const authHeader = req.headers.authorization || req.headers.Authorization;
     if (!authHeader?.startsWith("Bearer")) {
@@ -18,8 +18,8 @@ const verifyJWT = (req, res, next) => {
     });
   } catch (err) {
     logError(err);
-    next(err);
+    return res.status(400).json({ message: "Bad request" });
   }
-};
+}
 
 module.exports = verifyJWT;
