@@ -3,21 +3,22 @@ const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 const bcrypt = require("bcrypt");
 
-//GET /users
-async function getAllUsers(req, res, next) {
+//GET /user
+async function getUserData(req, res, next) {
   try {
-    const users = await User.find().select("-password").lean();
-    if (!users || !Array.isArray(users) || !users.length >= 1) {
-      return res.status(404).json({ message: "No users found" });
+    const user = await User.findById(req.userid).select("-_id", "-password", "-active", "-__v").lean().exec();
+    if (!user) {
+      //!!!!!!!!!!!!!!!!
+      return res.status(400).json({ message: `User not found` });
     }
-    res.status(200).json(users);
+    res.status(200).json(user);
   } catch (err) {
     logError(err, req);
     next(err);
   }
 }
 
-//POST /users
+//POST /user
 async function createUser(req, res, next) {
   try {
     const { username, password } = req.body;
@@ -42,26 +43,29 @@ async function createUser(req, res, next) {
   }
 }
 
-//PATCH /users
+//PATCH /user
 async function updateUser(req, res, next) {
   try {
-    const { id, username, password, roles, active } = req.body;
-    if (!id || !username || !password || !Array.isArray(roles) || !roles.length || typeof active !== "boolean") {
-      return res.status(400).json({ message: "All fields are required" });
+    const { newUsername, newPassword } = req.body;
+    const id = req.userid;
+
+    if (!newUsername && !newPassword) {
+      return res.status(400).json({ message: "Nothing to change" });
     }
-    const user = await User.findById(id).exec();
+    const user = await User.findById(id).lean().exec();
     if (!user) {
-      return res.status(404).json({ message: `User ${username} not found` });
+      //!!!!!!!!!!!!!!!!
+      return res.status(404).json({ message: `User not found` });
     }
-    const duplicate = await User.findOne({ username }).lean().exec();
-    if (duplicate && duplicate?._id.toString() !== id) {
-      return res.status(409).json({ message: `Username ${username} already exists` });
+    if (newUsername) {
+      const duplicate = await User.findOne({ newUsername }).lean().exec();
+      if (duplicate && duplicate?._id.toString() !== id) {
+        return res.status(409).json({ message: `Username ${newUsername} already exists` });
+      }
+      user.username = newUsername;
     }
-    user.username = username;
-    user.roles = roles;
-    user.active = active;
-    if (password) {
-      user.password = await bcrypt.hash(password, 10);
+    if (newPassword) {
+      user.password = await bcrypt.hash(newPassword, 10);
     }
     const updatedUser = await user.save();
     res.status(200).json({ message: `${updatedUser.username} updated successfully` });
@@ -74,17 +78,14 @@ async function updateUser(req, res, next) {
 //DELETE /users
 async function deleteUser(req, res, next) {
   try {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(400).json({ message: "User ID required" });
-    }
-    const notes = await Note.findOne({ user: id }).lean().exec();
-    if (notes?.length) {
-      return res.status(400).json({ message: "User has assigned notes!" });
-    }
-    const user = await User.findById(id).exec();
+    const id = req.userid;
+    const user = await User.findById(id).lean().exec();
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: `User not found` });
+    }
+    const note = await Note.findOne({ userid: id }).lean().exec();
+    if (note) {
+      await Note.deleteMany({ userid: id });
     }
     const result = await user.deleteOne();
     res.status(200).json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
@@ -94,4 +95,4 @@ async function deleteUser(req, res, next) {
   }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, deleteUser };
+module.exports = { getUserData, createUser, updateUser, deleteUser };

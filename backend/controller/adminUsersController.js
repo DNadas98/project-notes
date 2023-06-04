@@ -17,33 +17,8 @@ async function getAllUsers(req, res, next) {
   }
 }
 
-//POST /users
-async function createUser(req, res, next) {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required" });
-    }
-    const duplicate = await User.findOne({ username }).lean().exec();
-    if (duplicate) {
-      return res.status(409).json({ message: `Username ${username} already exists` });
-    }
-    const hashedPwd = await bcrypt.hash(password, 10); //10 salt rounds
-    const userObject = { "username": username, "password": hashedPwd, "roles": ["User"] };
-    const user = await User.create(userObject);
-    if (user) {
-      res.status(201).json({ message: `New user ${username} created successfully` });
-    } else {
-      res.status(400).json({ message: "Failed to create new user" });
-    }
-  } catch (err) {
-    logError(err, req);
-    next(err);
-  }
-}
-
 //PATCH /users
-async function updateUser(req, res, next) {
+async function updateUserById(req, res, next) {
   try {
     const { id, username, password, roles, active } = req.body;
     if (!id || !username || !password || !Array.isArray(roles) || !roles.length || typeof active !== "boolean") {
@@ -72,19 +47,19 @@ async function updateUser(req, res, next) {
 }
 
 //DELETE /users
-async function deleteUser(req, res, next) {
+async function deleteUserById(req, res, next) {
   try {
     const { id } = req.body;
     if (!id) {
       return res.status(400).json({ message: "User ID required" });
     }
-    const notes = await Note.findOne({ user: id }).lean().exec();
-    if (notes?.length) {
-      return res.status(400).json({ message: "User has assigned notes!" });
-    }
     const user = await User.findById(id).exec();
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+    const note = await Note.findOne({ userid: id }).lean().exec();
+    if (note) {
+      await Note.deleteMany({ userid: id });
     }
     const result = await user.deleteOne();
     res.status(200).json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
@@ -94,4 +69,4 @@ async function deleteUser(req, res, next) {
   }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, deleteUser };
+module.exports = { getAllUsers, updateUserById, deleteUserById };

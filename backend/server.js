@@ -9,10 +9,12 @@ const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
+const verifyJWT = require("./middleware/auth/verifyJWT");
+const verifyRoles = require("./middleware/auth/verifyRoles");
 const rootRouter = require("./routes/root.js");
 const authRouter = require("./routes/api/auth.js");
+const userRouter = require("./routes/api/user.js");
 /*
-const usersRouter = require("./routes/api/users.js");
 const notesRouter = require("./routes/api/notes.js");
 */
 const adminRouter = require("./routes/api/admin.js");
@@ -39,11 +41,11 @@ server.use(logRequest);
 //Routing
 server.use("/", rootRouter);
 server.use("/auth", authRouter);
+server.use("/users", userRouter);
 /*
-server.use("/users", usersRouter);
 server.use("/notes", notesRouter);
 */
-server.use("/admin", adminRouter);
+server.use("/admin", verifyJWT, (req, res, next) => verifyRoles(req, res, next, ["Admin"]), adminRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {

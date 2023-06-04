@@ -3,7 +3,7 @@ const { logError } = require("../middleware/logger");
 const { isValidObjectId } = require("mongoose");
 
 //GET /notes
-async function getNotesOfUser(req, res, next) {
+async function getNotes(req, res, next) {
   try {
     const { userid } = req.body;
     if (!userid) {
@@ -13,20 +13,6 @@ async function getNotesOfUser(req, res, next) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
     const notes = await Note.find({ userid }).lean();
-    if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
-      return res.status(404).json({ message: "No notes found" });
-    }
-    res.status(200).json(notes);
-  } catch (err) {
-    logError(err, req);
-    next(err);
-  }
-}
-
-//GET /notes/all
-async function getAllNotes(req, res, next) {
-  try {
-    const notes = await Note.find().lean();
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }

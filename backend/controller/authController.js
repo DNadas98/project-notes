@@ -20,12 +20,12 @@ async function login(req, res, next) {
     }
     //create accesstoken, refreshtoken
     const accessToken = jwt.sign(
-      { "UserInfo": { "username": foundUser.username, "roles": foundUser.roles } },
+      { "UserInfo": { "id": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
     );
     const refreshToken = jwt.sign(
-      { "UserInfo": { "username": foundUser.username, "roles": foundUser.roles } },
+      { "UserInfo": { "id": foundUser._id, "roles": foundUser.roles } },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
     );
@@ -52,12 +52,12 @@ async function refresh(req, res, next) {
     const refreshToken = cookies.jwt;
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
       try {
-        const foundUser = await User.findOne({ username: decoded.UserInfo.username }).exec();
+        const foundUser = await User.findById(decoded.UserInfo.id).exec();
         if (!foundUser || !foundUser.active) {
           return res.status(401).json({ message: "Unauthorized" });
         }
         const accessToken = jwt.sign(
-          { "UserInfo": { "username": foundUser.username, "roles": foundUser.roles } },
+          { "UserInfo": { "id": foundUser._id, "roles": foundUser.roles } },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
         );

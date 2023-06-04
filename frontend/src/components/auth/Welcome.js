@@ -3,13 +3,13 @@ import React from "react";
 import format from "date-fns/format";
 
 function Welcome() {
-  const todaysDate = format(new Date(), "yyyy MM dd");
+  const todaysDate = format(new Date(), "yyyy. MM. dd.");
   return (
     <section className="auth_welcome">
       <p>{todaysDate}</p>
       <h1>Welcome!</h1>
       <Link to="/api/notes">
-        <button>Projects</button>
+        <button>Your notes</button>
       </Link>
       <Link to="/api/users">
         <button>User settings</button>
