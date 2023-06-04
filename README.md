@@ -1,4 +1,4 @@
-# Express server
+# My express server
 
 - https://github.com/DNadas98/express_server
 
@@ -124,6 +124,17 @@
   - users
   - notes
 
-# Frontend
+# Frontend: React
 
-### React router
+# Config
+
+- frontend/.env
+
+# React routing
+
+- App.js
+- layout: Layout.js
+
+# Style
+
+- Flex layout
