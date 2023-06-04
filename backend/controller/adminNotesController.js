@@ -44,7 +44,7 @@ async function createNote(req, res, next) {
     if (!userid || !title || !text) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const duplicate = await Note.findOne({ title }).lean().exec();
+    const duplicate = await Note.findOne({ title, userid }).lean().exec();
     if (duplicate) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
@@ -65,14 +65,14 @@ async function createNote(req, res, next) {
 async function updateNote(req, res, next) {
   try {
     const { id, userid, title, text, completed } = req.body;
-    if (!id || !userid || !title || !text || !completed || typeof completed != "boolean") {
+    if (!id || !userid || !title || !text || !completed || typeof completed !== "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
     }
     const note = await Note.findById(id).exec();
     if (!note) {
       return res.status(404).json({ message: `Note ${title} not found` });
     }
-    const duplicate = await Note.findOne({ title }).lean().exec();
+    const duplicate = await Note.findOne({ title, userid }).lean().exec();
     if (duplicate && duplicate?._id.toString() !== id) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
@@ -99,7 +99,7 @@ async function deleteNote(req, res, next) {
       return res.status(404).json({ message: "Note not found" });
     }
     const result = await note.deleteOne();
-    res.status(200).json({ message: `Note with title ${result.title} with ID ${result._id} deleted successfully` });
+    res.status(200).json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
   } catch (err) {
     logError(err, req);
     next(err);

@@ -11,10 +11,10 @@ async function login(req, res, next) {
       return res.status(400).json({ message: "Username and password are required" });
     }
     const foundUser = await User.findOne({ username }).exec();
-    if (!foundUser || !foundUser.active) {
+    if (!foundUser || !foundUser.active || typeof password !== "string") {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const pwdMatching = bcrypt.compare(password, foundUser.password);
+    const pwdMatching = await bcrypt.compare(password, foundUser.password);
     if (!pwdMatching) {
       return res.status(401).json({ message: "Unauthorized" });
     }

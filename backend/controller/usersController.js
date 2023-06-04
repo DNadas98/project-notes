@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 //GET /user
 async function getUserData(req, res, next) {
   try {
-    const user = await User.findById(req.userid).select("-password -active -__v").lean().exec();
+    const user = await User.findById(req.userid).select("-_id -password -active -__v").lean().exec();
     if (!user) {
       //!!!!!!!!!!!!!!!!
       return res.status(400).json({ message: `User not found` });
@@ -52,7 +52,8 @@ async function updateUser(req, res, next) {
     if (!newUsername && !newPassword) {
       return res.status(400).json({ message: "Nothing to change" });
     }
-    const user = await User.findById(id).lean().exec();
+    const user = await User.findById(id).exec();
+    console.log(id);
     if (!user) {
       //!!!!!!!!!!!!!!!!
       return res.status(404).json({ message: `User not found` });
@@ -67,6 +68,7 @@ async function updateUser(req, res, next) {
     if (newPassword) {
       user.password = await bcrypt.hash(newPassword, 10);
     }
+    console.log(user);
     const updatedUser = await user.save();
     res.status(200).json({ message: `${updatedUser.username} updated successfully` });
   } catch (err) {
@@ -79,7 +81,7 @@ async function updateUser(req, res, next) {
 async function deleteUser(req, res, next) {
   try {
     const id = req.userid;
-    const user = await User.findById(id).lean().exec();
+    const user = await User.findById(id).exec();
     if (!user) {
       return res.status(404).json({ message: `User not found` });
     }
@@ -87,7 +89,8 @@ async function deleteUser(req, res, next) {
     if (note) {
       await Note.deleteMany({ userid: id });
     }
-    const result = await user.deleteOne();
+    const result = await User.deleteOne(id);
+    console.log(user, result);
     res.status(200).json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
   } catch (err) {
     logError(err, req);
