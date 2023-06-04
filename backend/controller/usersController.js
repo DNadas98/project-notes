@@ -11,7 +11,7 @@ async function getUserData(req, res, next) {
       console.warn("verifyJWT failed at getUserData");
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const user = await User.findById(userid).select("-_id -password -active -__v").lean();
+    const user = await User.findById(userid).select("-_id -password -active").lean();
     if (!user) {
       console.warn("verifyJWT failed at getUserData");
       return res.status(400).json({ message: `User not found` });
