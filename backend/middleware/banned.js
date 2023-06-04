@@ -1,4 +1,4 @@
-const bannedOrigins = require("..config/bannedOrigins");
+const bannedOrigins = require("../config/bannedOrigins");
 
 function banned(req, res, next) {
   const origin = req.headers.origin;

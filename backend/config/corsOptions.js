@@ -1,5 +1,5 @@
 const allowedOrigins = require("./corsAllowedOrigins");
-const logger = require("../middleware/logger");
+const { logError } = require("../middleware/logger");
 
 const corsOptions = {
   methods: ["GET", "POST", "PATCH", "DELETE"],
@@ -9,7 +9,7 @@ const corsOptions = {
       callback(null, true);
     } else {
       const err = new Error("Not allowed by CORS");
-      logger.logError(err);
+      logError(err);
       callback(err);
     }
   },

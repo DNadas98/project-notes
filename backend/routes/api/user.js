@@ -5,6 +5,10 @@ const verifyUser = require("../../middleware/auth/verifyUser");
 
 const router = express.Router();
 
-router.route("/").post(createUser).use(verifyJWT, verifyUser).get(getUserData).patch(updateUser).delete(deleteUser);
+router.post("/", createUser);
+
+router.use(verifyJWT, verifyUser);
+
+router.route("/").get(getUserData).patch(updateUser).delete(deleteUser);
 
 module.exports = router;

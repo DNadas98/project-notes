@@ -74,7 +74,9 @@ async function refresh(req, res) {
 function logout(req, res, next) {
   try {
     const cookies = req.cookies;
-    if (!cookies?.jwt) return res.status(204).json({ message: "No content" });
+    if (!cookies?.jwt) {
+      return res.status(204).json({ message: "No content" });
+    }
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.status(200).json({ message: "Logout successful" });
   } catch (err) {
