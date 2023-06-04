@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 //GET /user
 async function getUserData(req, res, next) {
   try {
-    const user = await User.findById(req.userid).select("-_id", "-password", "-active", "-__v").lean().exec();
+    const user = await User.findById(req.userid).select("-password -active -__v").lean().exec();
     if (!user) {
       //!!!!!!!!!!!!!!!!
       return res.status(400).json({ message: `User not found` });
