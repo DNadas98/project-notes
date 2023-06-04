@@ -5,11 +5,11 @@ const { logError } = require("../logger");
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
-  message: { message: "Too many login attempts from this IP, try again after 1 minute" },
   handler: (req, res, next, options) => {
     logError(options, req);
-    return res.status(403).json({ message: "Too many login attempts from this IP, try again after 1 minute" });
+    return res.status(403).json({ message: "Too many login attempts, try again after 1 minute" });
   },
+  // eslint-disable-next-line no-unused-vars
   skip: (req, res) => allowedOrigins.includes(req.origin) || !req.origin,
   standardHeaders: true,
   legacyHeaders: false

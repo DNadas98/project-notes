@@ -16,10 +16,10 @@ async function getNotesOfUser(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    res.status(200).json(notes);
+    return res.status(200).json(notes);
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -30,10 +30,10 @@ async function getAllNotes(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    res.status(200).json(notes);
+    return res.status(200).json(notes);
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -51,13 +51,12 @@ async function createNote(req, res, next) {
     const noteObject = { "userid": userid, "title": title, "text": text };
     const note = await Note.create(noteObject);
     if (note) {
-      res.status(201).json({ message: `New note ${title} created successfully` });
-    } else {
-      res.status(400).json({ message: "Failed to create new note" });
+      return res.status(201).json({ message: `New note ${title} created successfully` });
     }
+    return res.status(400).json({ message: "Failed to create new note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -80,10 +79,13 @@ async function updateNote(req, res, next) {
     note.text = text;
     note.completed = completed;
     const updatedNote = await note.save();
-    res.status(200).json({ message: `${updatedNote.title} updated successfully` });
+    if (updateNote) {
+      return res.status(200).json({ message: `${updatedNote.title} updated successfully` });
+    }
+    return res.status(400).json({ message: "Failed to update note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -99,10 +101,15 @@ async function deleteNote(req, res, next) {
       return res.status(404).json({ message: "Note not found" });
     }
     const result = await note.deleteOne();
-    res.status(200).json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+    }
+    return res.status(400).json({ message: "Failed to delete note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 

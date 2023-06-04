@@ -7,7 +7,7 @@ async function getNotes(req, res, next) {
   try {
     const userid = req.userid;
     if (!userid) {
-      //!!!!!!!!!!!!!!!!
+      console.warn("verifyJWT failed at getNotes");
       return res.status(401).json({ message: "Unauthorized" });
     }
     if (!isValidObjectId(userid)) {
@@ -17,10 +17,10 @@ async function getNotes(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    res.status(200).json(notes);
+    return res.status(200).json(notes);
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -29,27 +29,26 @@ async function createNote(req, res, next) {
   try {
     const userid = req.userid;
     if (!userid) {
-      //!!!!!!!!!!!!!!!!
+      console.warn("verifyJWT failed at createNote");
       return res.status(401).json({ message: "Unauthorized" });
     }
     const { title, text } = req.body;
     if (!title || !text) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const duplicate = await Note.findOne({ userid, title });
+    const duplicate = await Note.findOne({ userid, title }).lean();
     if (duplicate) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     const noteObject = { "userid": userid, "title": title, "text": text };
-    const note = await Note.create(noteObject);
+    const note = await Note.create(noteObject).lean();
     if (note) {
-      res.status(201).json({ message: `New note ${title} created successfully` });
-    } else {
-      res.status(400).json({ message: "Failed to create new note" });
+      return res.status(201).json({ message: `New note ${title} created successfully` });
     }
+    return res.status(400).json({ message: "Failed to create new note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -58,7 +57,7 @@ async function updateNote(req, res, next) {
   try {
     const userid = req.userid;
     if (!userid) {
-      //!!!!!!!!!!!!!!!!
+      console.warn("verifyJWT failed at updateNote");
       return res.status(401).json({ message: "Unauthorized" });
     }
     const { id, title, text, completed } = req.body;
@@ -69,19 +68,21 @@ async function updateNote(req, res, next) {
     if (!note) {
       return res.status(404).json({ message: `Note with title ${title} not found` });
     }
-    const duplicate = await Note.findOne({ userid, title });
+    const duplicate = await Note.findOne({ userid, title }).lean();
     if (duplicate && duplicate.id.toString() !== id) {
-      console.log(duplicate);
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     note.title = title;
     note.text = text;
     note.completed = completed;
     const updatedNote = await note.save();
-    res.status(200).json({ message: `${updatedNote.title} updated successfully` });
+    if (updateNote) {
+      return res.status(200).json({ message: `${updatedNote.title} updated successfully` });
+    }
+    return res.status(400).json({ message: "Failed to update note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
@@ -90,23 +91,27 @@ async function deleteNote(req, res, next) {
   try {
     const userid = req.userid;
     if (!userid) {
-      //!!!!!!!!!!!!!!!!
+      console.warn("verifyJWT failed at deleteNote");
       return res.status(401).json({ message: "Unauthorized" });
     }
     const { id } = req.body;
     if (!id) {
       return res.status(400).json({ message: "Note ID required" });
     }
-    console.log(id, userid);
     const note = await Note.findOne({ _id: id, userid }).exec();
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
     const result = await note.deleteOne();
-    res.status(200).json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+    }
+    return res.status(400).json({ message: "Failed to delete note" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 

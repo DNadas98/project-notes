@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { logError } = require("../logger");
-const { isValidObjectId } = require("mongoose");
+/*
+const User = require("../../model/schemas/User");*/
 
 function verifyJWT(req, res, next) {
   try {
@@ -9,17 +10,16 @@ function verifyJWT(req, res, next) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
-      if (err || !isValidObjectId(decoded?.UserInfo?.id) || !Array.isArray(decoded?.UserInfo?.roles)) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      req.userid = decoded.UserInfo.id;
-      req.roles = decoded.UserInfo.roles;
-      next();
-    });
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    req.userid = decoded.UserInfo.userid;
+    req.roles = decoded.UserInfo.roles;
+    return next();
   } catch (err) {
     logError(err);
-    return res.status(400).json({ message: "Bad request" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 }
 
