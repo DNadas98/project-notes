@@ -5,9 +5,10 @@ const { isValidObjectId } = require("mongoose");
 //GET /notes
 async function getNotes(req, res, next) {
   try {
-    const { userid } = req.body;
+    const userid = req.userid;
     if (!userid) {
-      return res.status(400).json({ message: "User ID is required" });
+      //!!!!!!!!!!!!!!!!
+      return res.status(401).json({ message: "Unauthorized" });
     }
     if (!isValidObjectId(userid)) {
       return res.status(400).json({ message: "Invalid user ID" });
@@ -26,8 +27,13 @@ async function getNotes(req, res, next) {
 //POST /notes
 async function createNote(req, res, next) {
   try {
-    const { userid, title, text } = req.body;
-    if (!userid || !title || !text) {
+    const userid = req.userid;
+    if (!userid) {
+      //!!!!!!!!!!!!!!!!
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const { title, text } = req.body;
+    if (!title || !text) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const duplicate = await Note.findOne({ title }).lean().exec();
@@ -92,4 +98,4 @@ async function deleteNote(req, res, next) {
   }
 }
 
-module.exports = { getNotesOfUser, getAllNotes, createNote, updateNote, deleteNote };
+module.exports = { getNotes, createNote, updateNote, deleteNote };

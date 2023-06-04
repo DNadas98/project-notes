@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { logError } = require("../logger");
+const { isValidObjectId } = require("mongoose");
 
 function verifyJWT(req, res, next) {
   try {
@@ -9,7 +10,7 @@ function verifyJWT(req, res, next) {
     }
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
-      if (err) {
+      if (err || !isValidObjectId(decoded?.UserInfo?.id) || !Array.isArray(decoded?.UserInfo?.roles)) {
         return res.status(403).json({ message: "Forbidden" });
       }
       req.userid = decoded.UserInfo.id;
