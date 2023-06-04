@@ -2,7 +2,6 @@ require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/dbConnection");
-const path = require("path");
 const rateLimiter = require("./middleware/rateLimiter");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -12,7 +11,6 @@ const { logRequest, logServed, logError } = require("./middleware/logger");
 const verifyJWT = require("./middleware/auth/verifyJWT");
 const verifyUser = require("./middleware/auth/verifyUser");
 const verifyRoles = require("./middleware/auth/verifyRoles");
-const rootRouter = require("./routes/root.js");
 const authRouter = require("./routes/api/auth.js");
 const userRouter = require("./routes/api/user.js");
 const notesRouter = require("./routes/api/notes.js");
@@ -32,13 +30,10 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(cookieParser());
 
-server.use("/public", express.static(path.join(__dirname, "..", "frontend_plainjs", "public")));
-
 //Request logger middleware
 server.use(logRequest);
 
 //Routing
-server.use("/", rootRouter);
 server.use("/auth", authRouter);
 server.use("/users", userRouter);
 server.use("/notes", verifyJWT, verifyUser, notesRouter);
@@ -47,14 +42,11 @@ server.use("/admin", verifyJWT, verifyUser, (req, res, next) => verifyRoles(req,
 //404 - Not Found
 server.use((req, res, next) => {
   try {
-    res.status(404);
     logServed(req, res);
-    if (req.accepts("text/html")) {
-      res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "404.html"));
-    } else if (req.accepts("application/json")) {
-      res.json({ "ERROR": "404 Not Found" });
+    if (req.accepts("application/json")) {
+      res.status(404).json({ message: "404 - Not Found" });
     } else {
-      res.send("404 - Not Found");
+      res.status(404).send("404 - Not Found");
     }
   } catch (err) {
     logError(err, req);
@@ -65,15 +57,11 @@ server.use((req, res, next) => {
 //500 - Internal Server Error
 // eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500);
   logError(err, req);
-  if (req.accepts("text/html")) {
-    res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "500.html"));
-  } else if (req.accepts("application/json")) {
-    res.json({ "ERROR": "500 Internal Server Error" });
+  if (req.accepts("application/json")) {
+    res.status(500).json({ message: "500 - Internal Server Error" });
   } else {
-    res.send("500 - Internal Server Error");
+    res.status(500).send("500 - Internal Server Error");
   }
 });
 
