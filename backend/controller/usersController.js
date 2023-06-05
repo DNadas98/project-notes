@@ -53,7 +53,7 @@ async function updateUser(req, res, next) {
     }
     const user = await User.findById(userid).exec();
     if (newUsername) {
-      const duplicate = await User.findOne({ newUsername }).lean();
+      const duplicate = await User.findOne({ username: newUsername }).lean();
       if (duplicate && duplicate?._id.toString() !== userid) {
         return res.status(409).json({ message: `Username ${newUsername} already exists` });
       }

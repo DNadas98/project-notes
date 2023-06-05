@@ -21,18 +21,28 @@ async function getAllUsers(req, res, next) {
 async function updateUserById(req, res, next) {
   try {
     const { userid, roles, active } = req.body;
-    if (!userid || !roles || !active) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!roles && !active) {
+      return res.status(204).json({ message: "Nothing to update" });
     }
-    if (!isValidObjectId(userid) || !Array.isArray(roles) || !roles.length >= 1 || typeof active !== "boolean") {
+    if (
+      !userid ||
+      !isValidObjectId(userid) ||
+      (roles && !Array.isArray(roles)) ||
+      (roles && !roles.length >= 1) ||
+      (active && typeof active !== "boolean")
+    ) {
       return res.status(400).json({ message: "Invalid user details" });
     }
     const user = await User.findById(userid).exec();
     if (!user) {
       return res.status(404).json({ message: `User not found` });
     }
-    user.roles = roles;
-    user.active = active;
+    if (roles) {
+      user.roles = roles;
+    }
+    if (active) {
+      user.active = active;
+    }
     const updatedUser = await user.save();
     if (updatedUser) {
       return res.status(200).json({ message: `User updated successfully` });
