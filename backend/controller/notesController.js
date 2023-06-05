@@ -29,7 +29,7 @@ async function createNote(req, res, next) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     const noteObject = { "userid": userid, "title": title, "text": text };
-    const note = await Note.create(noteObject).lean();
+    const note = await Note.create(noteObject);
     if (note) {
       return res.status(201).json({ message: `New note ${title} created successfully` });
     }
