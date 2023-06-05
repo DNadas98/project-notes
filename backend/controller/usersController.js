@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 async function getUserData(req, res, next) {
   try {
     const userid = req.userid;
-    const user = await User.findById(userid).select("-_id -password -active").lean();
+    const user = await User.findById(userid).select("-_id -password -active -__v").lean();
     if (!user) {
       console.warn("verifyJWT failed at getUserData");
       return res.status(400).json({ message: `User not found` });

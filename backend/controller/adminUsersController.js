@@ -6,7 +6,7 @@ const { isValidObjectId } = require("mongoose");
 //GET /users
 async function getAllUsers(req, res, next) {
   try {
-    const users = await User.find().select("-password").lean();
+    const users = await User.find().select("-password  -__v").lean();
     if (!users || !Array.isArray(users) || !users.length >= 1) {
       return res.status(404).json({ message: "No users found" });
     }
