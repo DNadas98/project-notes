@@ -3,95 +3,98 @@ const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 const bcrypt = require("bcrypt");
 
-//GET /users
-async function getAllUsers(req, res, next) {
+//GET /user
+async function getUserData(req, res, next) {
   try {
-    const users = await User.find().select("-password").lean();
-    if (!users || !Array.isArray(users) || !users.length >= 1) {
-      return res.status(404).json({ message: "No users found" });
+    const userid = req.userid;
+    const user = await User.findById(userid).select("-_id -password -active -__v").lean();
+    if (!user) {
+      console.warn("verifyJWT failed at getUserData");
+      return res.status(400).json({ message: `User not found` });
     }
-    res.json(users);
+    return res.status(200).json(user);
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
-//POST /users
+//POST /user
 async function createUser(req, res, next) {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required" });
     }
-    const duplicate = await User.findOne({ username }).lean().exec();
+    const duplicate = await User.findOne({ username }).lean();
     if (duplicate) {
       return res.status(409).json({ message: `Username ${username} already exists` });
     }
     const hashedPwd = await bcrypt.hash(password, 10); //10 salt rounds
     const userObject = { "username": username, "password": hashedPwd, "roles": ["User"] };
-    const user = await User.create(userObject);
+    const user = await User.create(userObject).lean();
     if (user) {
-      res.status(201).json({ message: `New user ${username} created successfully` });
-    } else {
-      res.status(400).json({ message: "Failed to create new user" });
+      return res.status(201).json({ message: `New user ${username} created successfully` });
     }
+    return res.status(400).json({ message: "Failed to create new user" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
-//PATCH /users
+//PATCH /user
 async function updateUser(req, res, next) {
   try {
-    const { id, username, password, roles, active } = req.body;
-    if (!id || !username || !password || !Array.isArray(roles) || !roles.length || typeof active !== "boolean") {
-      return res.status(400).json({ message: "All fields are required" });
+    const { newUsername, newPassword } = req.body;
+    const userid = req.userid;
+    if (!newUsername && !newPassword) {
+      return res.status(400).json({ message: "Nothing to change" });
     }
-    const user = await User.findById(id).exec();
-    if (!user) {
-      return res.status(404).json({ message: `User ${username} not found` });
+    const user = await User.findById(userid).exec();
+    if (newUsername) {
+      const duplicate = await User.findOne({ username: newUsername }).lean();
+      if (duplicate && duplicate?._id.toString() !== userid) {
+        return res.status(409).json({ message: `Username ${newUsername} already exists` });
+      }
+      user.username = newUsername;
     }
-    const duplicate = await User.findOne({ username }).lean().exec();
-    if (duplicate && duplicate?._id.toString() !== id) {
-      return res.status(409).json({ message: `Username ${username} already exists` });
-    }
-    user.username = username;
-    user.roles = roles;
-    user.active = active;
-    if (password) {
-      user.password = await bcrypt.hash(password, 10);
+    if (newPassword) {
+      user.password = await bcrypt.hash(newPassword, 10);
     }
     const updatedUser = await user.save();
-    res.json({ message: `${updatedUser.username} updated successfully` });
+    if (updatedUser) {
+      return res.status(200).json({ message: `${updatedUser.username} updated successfully` });
+    }
+    return res.status(400).json({ message: "Failed to update user" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
 //DELETE /users
 async function deleteUser(req, res, next) {
   try {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(400).json({ message: "User ID required" });
-    }
-    const notes = await Note.findOne({ user: id }).lean().exec();
-    if (notes?.length) {
-      return res.status(400).json({ message: "User has assigned notes!" });
-    }
-    const user = await User.findById(id).exec();
+    const userid = req.userid;
+    const user = await User.findById(userid).exec();
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      console.warn("verifyJWT failed at deleteUser");
+      return res.status(404).json({ message: `User not found` });
+    }
+    const note = await Note.findOne({ userid }).lean();
+    if (note) {
+      await Note.deleteMany({ userid });
     }
     const result = await user.deleteOne();
-    res.json({ message: `User named ${result.username} with ID ${result._id} deleted successfully` });
+    if (result.deletedCount > 0) {
+      return res.status(200).json({ message: `User named ${user.username} with ID ${user._id} deleted successfully` });
+    }
+    return res.status(400).json({ message: "Failed to delete user" });
   } catch (err) {
     logError(err, req);
-    next(err);
+    return next(err);
   }
 }
 
-module.exports = { getAllUsers, createUser, updateUser, deleteUser };
+module.exports = { getUserData, createUser, updateUser, deleteUser };

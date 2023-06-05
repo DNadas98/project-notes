@@ -1,53 +1,51 @@
 require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
 const mongoose = require("mongoose");
-const dbConnection = require("./config/dbConnection");
-const path = require("path");
-const rateLimiter = require("./config/rateLimiter");
+const connectToDatabase = require("./config/dbConnection");
 const helmet = require("helmet");
+const rateLimiter = require("./middleware/rateLimiter");
+const banned = require("./middleware/banned");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
-const rootRouter = require("./routes/root.js");
-const usersRouter = require("./routes/api/users.js");
+const authRouter = require("./routes/api/auth.js");
+const userRouter = require("./routes/api/user.js");
 const notesRouter = require("./routes/api/notes.js");
+const adminRouter = require("./routes/api/admin.js");
 
 const server = express();
 
 //Security middleware
 server.use(helmet());
 server.use(rateLimiter);
+server.use(banned);
 
 //CORS
-server.use(cors(corsOptions));
+server.use(cors(corsOptions)); //!origin ONLY for developement
 
 //Built-in middleware to handle form data, JSON and static files
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(cookieParser());
 
-server.use("/public", express.static(path.join(__dirname, "..", "frontend_plainjs", "public")));
-
 //Request logger middleware
 server.use(logRequest);
 
 //Routing
-server.use("/", rootRouter);
-server.use("/users", usersRouter);
+server.use("/auth", authRouter);
+server.use("/users", userRouter);
 server.use("/notes", notesRouter);
+server.use("/admin", adminRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {
   try {
-    res.status(404);
     logServed(req, res);
-    if (req.accepts("text/html")) {
-      res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "404.html"));
-    } else if (req.accepts("application/json")) {
-      res.json({ "ERROR": "404 Not Found" });
+    if (req.accepts("application/json")) {
+      res.status(404).json({ message: "Not Found" });
     } else {
-      res.send("404 - Not Found");
+      res.status(404).send("Not Found");
     }
   } catch (err) {
     logError(err, req);
@@ -58,20 +56,16 @@ server.use((req, res, next) => {
 //500 - Internal Server Error
 // eslint-disable-next-line no-unused-vars
 server.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500);
   logError(err, req);
-  if (req.accepts("text/html")) {
-    res.sendFile(path.join(__dirname, "..", "frontend_plainjs", "views", "500.html"));
-  } else if (req.accepts("application/json")) {
-    res.json({ "ERROR": "500 Internal Server Error" });
+  if (req.accepts("application/json")) {
+    res.status(500).json({ message: "Internal Server Error" });
   } else {
-    res.send("500 - Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 });
 
-//Start db, server
-dbConnection();
+//Connect to db, start server
+connectToDatabase();
 mongoose.connection.once("open", () => {
   console.log(`Connected to mongoDB`);
   server.listen(process.env.PORT, () => {

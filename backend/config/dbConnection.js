@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { logError } = require("../middleware/logger");
 
-const dbConnection = async () => {
+async function connectToDatabase() {
   try {
     await mongoose.connect(process.env.DB_CONN_STR, {
       useUnifiedTopology: true,
@@ -10,6 +10,6 @@ const dbConnection = async () => {
   } catch (err) {
     logError(err);
   }
-};
+}
 
-module.exports = dbConnection;
+module.exports = connectToDatabase;

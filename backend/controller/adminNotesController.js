@@ -1,11 +1,32 @@
 const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
+const { isValidObjectId } = require("mongoose");
 
 //GET /notes
-async function getNotes(req, res, next) {
+async function getNotesOfUser(req, res, next) {
   try {
-    const userid = req.userid;
+    const { userid } = req.body;
+    if (!userid) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    if (!isValidObjectId(userid)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
     const notes = await Note.find({ userid }).lean();
+    if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
+      return res.status(404).json({ message: "No notes found" });
+    }
+    return res.status(200).json(notes);
+  } catch (err) {
+    logError(err, req);
+    return next(err);
+  }
+}
+
+//GET /notes/all
+async function getAllNotes(req, res, next) {
+  try {
+    const notes = await Note.find().lean();
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
@@ -19,12 +40,11 @@ async function getNotes(req, res, next) {
 //POST /notes
 async function createNote(req, res, next) {
   try {
-    const userid = req.userid;
-    const { title, text } = req.body;
-    if (!title || !text) {
+    const { userid, title, text } = req.body;
+    if (!userid || !title || !text) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const duplicate = await Note.findOne({ userid, title }).lean();
+    const duplicate = await Note.findOne({ userid, title }).lean().exec();
     if (duplicate) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
@@ -43,17 +63,16 @@ async function createNote(req, res, next) {
 //PATCH /notes
 async function updateNote(req, res, next) {
   try {
-    const userid = req.userid;
-    const { id, title, text, completed } = req.body;
-    if (!id || !title || !text || typeof completed != "boolean") {
+    const { id, userid, title, text, completed } = req.body;
+    if (!id || !userid || !title || !text || !completed || typeof completed !== "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
     }
-    const note = await Note.findOne({ id, userid }).exec();
+    const note = await Note.findById(id).exec();
     if (!note) {
-      return res.status(404).json({ message: `Note with title ${title} not found` });
+      return res.status(404).json({ message: `Note ${title} not found` });
     }
-    const duplicate = await Note.findOne({ userid, title }).lean();
-    if (duplicate && duplicate.id.toString() !== id) {
+    const duplicate = await Note.findOne({ userid, title }).lean().exec();
+    if (duplicate && duplicate?._id.toString() !== id) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     note.title = title;
@@ -73,12 +92,11 @@ async function updateNote(req, res, next) {
 //DELETE /notes
 async function deleteNote(req, res, next) {
   try {
-    const userid = req.userid;
     const { id } = req.body;
     if (!id) {
       return res.status(400).json({ message: "Note ID required" });
     }
-    const note = await Note.findOne({ _id: id, userid }).exec();
+    const note = await Note.findById(id).exec();
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
@@ -95,4 +113,4 @@ async function deleteNote(req, res, next) {
   }
 }
 
-module.exports = { getNotes, createNote, updateNote, deleteNote };
+module.exports = { getNotesOfUser, getAllNotes, createNote, updateNote, deleteNote };

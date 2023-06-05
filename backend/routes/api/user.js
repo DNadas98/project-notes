@@ -1,12 +1,14 @@
 const express = require("express");
+const { getUserData, createUser, updateUser, deleteUser } = require("../../controller/usersController");
 const verifyJWT = require("../../middleware/auth/verifyJWT");
 const verifyUser = require("../../middleware/auth/verifyUser");
-const { getNotes, createNote, updateNote, deleteNote } = require("../../controller/notesController");
 
 const router = express.Router();
 
+router.post("/", createUser);
+
 router.use(verifyJWT, verifyUser);
 
-router.route("/").get(getNotes).post(createNote).patch(updateNote).delete(deleteNote);
+router.route("/").get(getUserData).patch(updateUser).delete(deleteUser);
 
 module.exports = router;

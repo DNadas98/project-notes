@@ -5,13 +5,16 @@ function Public() {
   return (
     <section className="public_welcome_section">
       <p>
-        Project Notes is a MERN stack web application built mainly to practice MERN stack, however the app can actually
-        be useful for creating and storing notes, user stories and other information for different projects.
+        Project Auth is a MERN stack web application built mainly to practice MERN stack, however the app can actually
+        be useful as a template for further mern projects.
       </p>
       <div className="inline">
-        <h2>Please log in to access your projects</h2>
+        <h2>Please log in to access your profile</h2>
         <Link to="/login">
           <button>Log in</button>
+        </Link>
+        <Link to="/register">
+          <button>Register</button>
         </Link>
       </div>
     </section>

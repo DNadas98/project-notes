@@ -1,89 +1,140 @@
-# Express server
+# My express server
 
 - https://github.com/DNadas98/express_server
 
+# Config
+
+- backend/config/
+  - main config file: `config.env`
+  - banned list: `bannedOrigins.js`
+  - CORS allowed list: `corsAllowedOrigins.js`
+
+# Middleware
+
+- [helmet](https://www.npmjs.com/package/helmet)
+- rateLimiter: [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
+  - config.env: LIMITER_MS, LIMITER_MAX
+  - max 200 requests in 10 min by IP
+- banned: middleware that blocks banned origins
+  - banned list: config/bannedOrigins.js
+  - possible results:
+    - response: 403, json or text message: Forbidden
+    - calls `next()`
+- [cors](https://www.npmjs.com/package/cors)
+
+  - allowed list: config/corsAllowedOrigins.js
+
+- loginLimiter:
+  - same npm package as rateLimiter
+  - max 5 login requests in 1 min by IP
+- verifyJWT: [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+  - https://auth0.com/docs/secure/tokens/json-web-tokens
+  - verifies, decodes JWT access token
+  - requires:
+    - JWT access token in Authorization header
+  - possible results:
+    - response: 401, json message: Unauthorized
+    - decoded --> `req.userid, req.roles`, calls `next()`
+- verifyUser:
+  - verifies that the user data decoded from the JWT access token exists in the database
+  - requires:
+    - req.userid, req.roles
+  - possible results:
+    - response: 401, json message: Unauthorized
+    - calls `next()`
+- verifyRoles:
+  - verifies that the user data decoded from the JWT access token has one of the roles that are allowed to access the endpoint
+  - example:
+  ```js
+  router.use((req, res, next) => verifyRoles(req, res, next, ["Editor", "Admin"]));
+  /*endpoints only accessible to users with Editor, and/or Admin roles*/
+  ```
+  - requires:
+    - req.roles
+  - possible results:
+    - response: 401, json message: Unauthorized
+    - calls `next()`
+
 # Routes
 
-### Root
+- (request `--> middleware -->` API endpoint: controller function)
+- --> helmet --> rateLimiter --> banned --> cors -->
 
-- GET `^/$|/index(.html)?`: Home page
-- GET `/old(.html)?`: Test redirect
-- GET `/error`: Test 500 error
+### API `/auth`
+
+- --> loginLimiter -->
+- `POST /login`: login
+  - requires:
+    - username: string, password: string in request body
+  - possible results:
+    - response: 4xx, json error message
+    - response: 200, body: new JWT access token, cookie: new JWT refresh token
+- --> verifyJWT --> verifyUser
+- `GET /refresh`: refresh
+  - requires:
+    - cookie: JWT refresh token
+  - possible results:
+    - response: 4xx, json error message
+    - response: 200, body: new JWT access token
+- `GET /logout`: logout
+  - requires:
+    - cookie: JWT refresh token
+  - possible results:
+    - response: 204, json message: No content
+    - response: 200, body: new JWT access token
 
 ### API `/users`
 
-- GET `/`: Read all users
-- POST `/`: Create user
-- PATCH `/`: Update user
-- DELETE `/`: Delete user
+- `POST /`: Create new user
+- --> verifyJWT --> verifyUser -->
+- `GET /`: Read user data
+- `PATCH /`: Update user
+- `DELETE /`: Delete user
 
 ### API `/notes`
 
-- GET `/`: Read all notes
-- POST `/`: Create note
-- PATCH `/`: Update note
-- DELETE `/`: Delete note
+- --> verifyJWT --> verifyUser -->
+- `GET /`: Read user notes
+- `POST /`: Create user note
+- `PATCH /`: Update user note
+- `DELETE /`: Delete user note
+
+### API `/admin`
+
+- --> verifyJWT --> verifyUser --> verifyRoles[ "Admin" ] -->
+
+  #### `/users`
+
+  - `GET /`: Read all users
+  - `PATCH /`: Update user by ID
+  - `DELETE /`: Delete user by ID
+
+  #### `/notes`
+
+  - `GET /`: Read all notes
+  - `POST /`: Create note
+  - `PATCH /`: Update note
+  - `DELETE /`: Delete note
 
 # Database
 
-- mongoDB local
+- mongoDB localhost
+- config/config.env/DB_CONN_STR
 - projectsdb
+  - users
+  - notes
 
-# Dotenv
+# Frontend: React
 
-- `backend/config/config.env`
+# Config
 
-# Frontend
+- frontend/.env
 
-### React router
+# React routing
 
-# New info
+- App.js
+- layout: Layout.js
 
-### Dotenv:
+# Style
 
-- Configure .env so the whole server can use it as process.env. ...
-  ```js
-  require("dotenv").config({ path: "backend/config/config.env" });
-  ```
-
-### Mongo/mongoose
-
-#### Queries
-
-- [`.select()`](https://devdocs.io/mongoose/api/query#query_Query-select)
-  - specifies what fields the query should return
-- [`.lean()`](https://devdocs.io/mongoose/api/query#query_Query-lean)
-  - returns plain js object without mongoose specific features
-- [`.exec()`](https://devdocs.io/mongoose/api/query#query_Query-exec)
-
-  - executes the query, needs to be used when the return value of the query is used later on
-
-#### Schemas
-
-- [timestamp](https://mongoosejs.com/docs/timestamps.html)
-
-  - adds `createdAt`, `updatedAt` properties
-
-  ```js
-  const mySchema = new mongoose.Schema({}, { timestamps: true });
-  ```
-
-- [mongoose-sequence](https://www.npmjs.com/package/mongoose-sequence)
-
-  - used for auto incremented fields (id)
-
-  ```js
-  const autoIncrement = require("mongoose-sequence")(mongoose);
-  noteSchema.plugin(autoIncrement, { inc_field: "ticket", id: "ticketNums", start_seq: 1 });
-  ```
-
-### React
-
-- react router:
-  ```js
-  <BrowserRouter>
-    <Routes>
-      <Route path="/*" element={<App />} />
-    </Routes>
-  </BrowserRouter>
-  ```
+- Flex layout
