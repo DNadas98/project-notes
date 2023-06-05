@@ -4,7 +4,7 @@ const { logError } = require("../logger");
 
 async function verifyUser(req, res, next) {
   try {
-    if (!req?.userid || !isValidObjectId(req.userid) || !req?.roles || Array.isArray(req.roles)) {
+    if (!req?.userid || !isValidObjectId(req.userid) || !req?.roles || !Array.isArray(req.roles)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const user = await User.findOne({ _id: req.userid, roles: req.roles }).lean();
