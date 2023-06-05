@@ -52,10 +52,6 @@ async function updateUser(req, res, next) {
       return res.status(400).json({ message: "Nothing to change" });
     }
     const user = await User.findById(userid).exec();
-    if (!user) {
-      console.warn("verifyJWT failed at updateUser");
-      return res.status(404).json({ message: `User not found` });
-    }
     if (newUsername) {
       const duplicate = await User.findOne({ newUsername }).lean();
       if (duplicate && duplicate?._id.toString() !== userid) {
