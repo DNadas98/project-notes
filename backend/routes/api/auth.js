@@ -7,7 +7,7 @@ const verifyUser = require("../../middleware/auth/verifyUser");
 const router = express.Router();
 
 router.post("/login", loginLimiter, login);
-router.get("/refresh", verifyJWT, verifyUser, refresh);
+router.get("/refresh", refresh);
 router.get("/logout", verifyJWT, verifyUser, logout);
 
 module.exports = router;

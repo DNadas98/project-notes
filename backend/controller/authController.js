@@ -2,6 +2,7 @@ const User = require("../model/schemas/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { logError } = require("../middleware/logger");
+const { isValidObjectId } = require("mongoose");
 
 //GET /auth/login
 async function login(req, res, next) {
@@ -54,12 +55,17 @@ async function refresh(req, res) {
     if (!decoded?.UserInfo?.userid || !decoded?.UserInfo?.roles) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const foundUser = await User.findById(decoded.UserInfo.userid).lean();
+    const userid = decoded.UserInfo.userid;
+    const roles = decoded.UserInfo.roles;
+    if (!isValidObjectId(userid) || !Array.isArray(roles)) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const foundUser = await User.findOne({ _id: userid, roles }).lean();
     if (!foundUser || !foundUser.active) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const accessToken = jwt.sign(
-      { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
+      { "UserInfo": { "userid": userid, "roles": roles } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
     );
