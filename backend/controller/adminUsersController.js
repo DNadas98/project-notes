@@ -2,6 +2,7 @@ const User = require("../model/schemas/User");
 const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 const { isValidObjectId } = require("mongoose");
+const availableRoles = require("../config/availableRoles");
 
 //GET /users
 async function getAllUsers(req, res, next) {
@@ -29,6 +30,7 @@ async function updateUserById(req, res, next) {
       !isValidObjectId(userid) ||
       (roles && !Array.isArray(roles)) ||
       (roles && !roles.includes("User")) ||
+      (roles && roles.some((role) => !availableRoles.includes(role))) ||
       (active && typeof active !== "boolean")
     ) {
       return res.status(400).json({ message: "Invalid user details" });
