@@ -28,7 +28,7 @@ async function updateUserById(req, res, next) {
       !userid ||
       !isValidObjectId(userid) ||
       (roles && !Array.isArray(roles)) ||
-      (roles && !roles.length >= 1) ||
+      (roles && !roles.includes("User")) ||
       (active && typeof active !== "boolean")
     ) {
       return res.status(400).json({ message: "Invalid user details" });
