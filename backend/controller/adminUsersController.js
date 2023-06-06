@@ -37,10 +37,13 @@ async function updateUserById(req, res, next) {
     if (!user) {
       return res.status(404).json({ message: `User not found` });
     }
+    if (user.roles.includes("Admin")) {
+      return res.status(401).json({ message: "Admin accounts can not be modified here" });
+    }
     if (roles) {
       user.roles = roles;
     }
-    if (active) {
+    if (typeof active === "boolean") {
       user.active = active;
     }
     const updatedUser = await user.save();
@@ -67,6 +70,9 @@ async function deleteUserById(req, res, next) {
     const user = await User.findById(userid).exec();
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+    if (user.roles.includes("Admin")) {
+      return res.status(401).json({ message: "Admin accounts can not be deleted here" });
     }
     const note = await Note.findOne({ userid }).lean().exec();
     if (note) {
