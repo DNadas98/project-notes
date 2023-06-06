@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.post("/login", loginLimiter, login);
 router.get("/refresh", refresh);
-router.get("/logout", verifyJWT, verifyUser, logout);
+router.post("/logout", verifyJWT, verifyUser, logout);
 
 module.exports = router;

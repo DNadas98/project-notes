@@ -76,7 +76,7 @@
   - possible results:
     - response: 4xx, json error message
     - response: 200, body: new JWT access token
-- `GET /logout`: logout
+- `POST /logout`: logout
   - requires:
     - cookie: JWT refresh token
   - possible results:
