@@ -32,7 +32,7 @@ async function createUser(req, res, next) {
     }
     const hashedPwd = await bcrypt.hash(password, 10); //10 salt rounds
     const userObject = { "username": username, "password": hashedPwd, "roles": ["User"] };
-    const user = await User.create(userObject).lean();
+    const user = await User.create(userObject);
     if (user) {
       return res.status(201).json({ message: `New user ${username} created successfully` });
     }

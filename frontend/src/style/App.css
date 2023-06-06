@@ -104,7 +104,8 @@ footer a:active {
   opacity: 0.5;
 }
 
-section {
+section,
+form {
   display: flex;
   flex-direction: column;
   justify-content: center;
