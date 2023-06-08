@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/", createUser);
 
-router.use(verifyJWT, verifyUser);
+//router.use(verifyJWT, verifyUser);
 
 router.route("/").get(getUserData).patch(updateUser).delete(deleteUser);
 

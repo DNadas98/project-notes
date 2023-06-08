@@ -26,8 +26,7 @@ function Login() {
           body: reqBody
         });
         const responseObject = await httpResponse.json();
-        console.log(responseObject);
-        if (httpResponse?.status === 200 && responseObject?.accessToken) {
+        if (httpResponse?.status === 200 /*&& responseObject?.accessToken*/) {
           setResultMessage("Login successful");
           //const
           setSuccessful(true);

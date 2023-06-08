@@ -7,7 +7,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Welcome from "./components/auth/Welcome";
 import NotesList from "./components/notes/NotesList";
-import UsersList from "./components/users/UsersList";
+import UserDetails from "./components/users/UserDetails";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
 
@@ -24,7 +24,7 @@ function App() {
           <Route path="api" element={<ApiLayout />}>
             <Route index element={<Welcome />} />
             <Route path="notes" element={<NotesList />} />
-            <Route path="users" element={<UsersList />} />
+            <Route path="users" element={<UserDetails />} />
           </Route>
           {/*error*/}
           <Route path="404" element={<NotFound />} />
