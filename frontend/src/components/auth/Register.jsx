@@ -25,8 +25,8 @@ function Register() {
           },
           body: reqBody
         });
-        const jsonResponse = await httpResponse.json();
-        setResultMessage(jsonResponse.message);
+        const responseObject = await httpResponse.json();
+        setResultMessage(responseObject.message);
         if (httpResponse.status === 201) {
           setSuccessful(true);
         }

@@ -25,12 +25,14 @@ function Login() {
           },
           body: reqBody
         });
-        const jsonResponse = await httpResponse.json();
-        if (httpResponse.status === 200) {
+        const responseObject = await httpResponse.json();
+        console.log(responseObject);
+        if (httpResponse?.status === 200 && responseObject?.accessToken) {
           setResultMessage("Login successful");
+          //const
           setSuccessful(true);
-        } else if (jsonResponse?.message) {
-          setResultMessage(jsonResponse.message);
+        } else if (responseObject?.message) {
+          setResultMessage(responseObject.message);
         }
       }
     } catch (err) {
