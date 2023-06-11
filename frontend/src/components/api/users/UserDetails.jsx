@@ -6,9 +6,10 @@ function UserDetails() {
     event.preventDefault();
   }
   return (
-    <section className="users_usersList">
+    <div className="UserDetails column">
       <h1>User settings</h1>
       <form
+        className="column"
         onSubmit={(event) => {
           handleSubmit(event);
         }}
@@ -22,7 +23,7 @@ function UserDetails() {
       <Link to="/api">
         <button>Back</button>
       </Link>
-    </section>
+    </div>
   );
 }
 

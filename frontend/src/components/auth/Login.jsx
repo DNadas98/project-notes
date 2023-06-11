@@ -40,7 +40,7 @@ function Login() {
   }
 
   return (
-    <section className="auth_login">
+    <div className="Login column">
       <h1>Login</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to log in</p>}
       {successful ? (
@@ -49,6 +49,7 @@ function Login() {
         </Link>
       ) : (
         <form
+          className="column"
           onSubmit={(event) => {
             handleSubmit(event);
           }}
@@ -75,7 +76,7 @@ function Login() {
       <Link to="/">
         <button>Back</button>
       </Link>
-    </section>
+    </div>
   );
 }
 

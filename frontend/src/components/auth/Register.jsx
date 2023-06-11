@@ -37,7 +37,7 @@ function Register() {
   }
 
   return (
-    <section className="auth_register">
+    <div className="Register column">
       <h1>Register</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to register</p>}
       {successful ? (
@@ -46,6 +46,7 @@ function Register() {
         </Link>
       ) : (
         <form
+          className="column"
           onSubmit={(event) => {
             handleSubmit(event);
           }}
@@ -72,7 +73,7 @@ function Register() {
       <Link to="/">
         <button>Back</button>
       </Link>
-    </section>
+    </div>
   );
 }
 

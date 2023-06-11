@@ -2,7 +2,7 @@ import React from "react";
 
 function Header({ pageTitle }) {
   return (
-    <header className="public_header">
+    <header>
       <h1>Welcome to {pageTitle}!</h1>
     </header>
   );

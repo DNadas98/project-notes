@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import "./style/App.css";
 import Layout from "./components/Layout";
-import Public from "./components/Public";
-import ApiLayout from "./components/ApiLayout";
+import Home from "./components/Home";
+import ApiLayout from "./components/api/ApiLayout";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Welcome from "./components/auth/Welcome";
-import NotesList from "./components/notes/NotesList";
-import UserDetails from "./components/users/UserDetails";
+import ApiHome from "./components/api/ApiHome";
+import NotesList from "./components/api/notes/NotesList";
+import UserDetails from "./components/api/users/UserDetails";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
 
@@ -15,21 +15,20 @@ function App() {
   return (
     <ErrorBoundary>
       <Routes>
+        {/*public*/}
         <Route path="/" element={<Layout />}>
-          {/*public*/}
-          <Route index element={<Public />} />
+          <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          {/*restricted*/}
-          <Route path="api" element={<ApiLayout />}>
-            <Route index element={<Welcome />} />
-            <Route path="notes" element={<NotesList />} />
-            <Route path="users" element={<UserDetails />} />
-          </Route>
-          {/*error*/}
-          <Route path="404" element={<NotFound />} />
-          <Route path="*" element={<NotFound />} />
         </Route>
+        {/*restricted*/}
+        <Route path="api" element={<ApiLayout />}>
+          <Route index element={<ApiHome />} />
+          <Route path="notes" element={<NotesList />} />
+          <Route path="users" element={<UserDetails />} />
+        </Route>
+        {/*404*/}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </ErrorBoundary>
   );

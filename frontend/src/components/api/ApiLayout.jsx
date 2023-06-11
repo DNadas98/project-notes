@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../Header";
+import Footer from "../Footer";
 
-function Layout() {
+function privateLayout() {
   return (
     <div className="Layout">
       <Header pageTitle="Project Auth" />
@@ -15,4 +15,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default privateLayout;

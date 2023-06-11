@@ -10,14 +10,13 @@ function NotesList() {
   ];
 
   return (
-    <section className="notes_notesList">
+    <div className="NotesList column">
       <h1>User notes</h1>
-      <ul>
+      <ul className="column">
         {example.map((note) => {
           return (
             <li key={note.id}>
-              <h1>Title: {note.title}</h1>
-              <h1>Text:</h1>
+              <h1>{note.title}</h1>
               <p>{note.text}</p>
             </li>
           );
@@ -26,7 +25,7 @@ function NotesList() {
       <Link to="/api">
         <button>Back</button>
       </Link>
-    </section>
+    </div>
   );
 }
 
