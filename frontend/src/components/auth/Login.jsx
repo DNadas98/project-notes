@@ -4,14 +4,13 @@ import useAuth from "../../hooks/useAuth";
 import useApiFetch from "../../hooks/useApiFetch";
 
 function Login() {
+  const location = useLocation();
   const { setAuth } = useAuth();
   const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
-  const location = useLocation();
-
   async function handleSubmit(event) {
     try {
       event.preventDefault();

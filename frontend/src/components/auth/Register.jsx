@@ -6,14 +6,14 @@ function Register() {
   const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
   const location = useLocation();
 
   async function handleSubmit(event) {
     try {
       event.preventDefault();
-      const username = event.target[0].value;
-      const password = event.target[1].value;
-      const confirmPassword = event.target[2].value;
       let validInput = true;
       if (!username || !password || !confirmPassword) {
         setResultMessage("All fields are required");
@@ -52,11 +52,29 @@ function Register() {
           }}
         >
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" />
+          <input
+            type="text"
+            id="username"
+            onChange={(event) => {
+              setUsername(event.target.value);
+            }}
+          />
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" />
+          <input
+            type="password"
+            id="password"
+            onChange={(event) => {
+              setPassword(event.target.value);
+            }}
+          />
           <label htmlFor="confirm_password">Confirm password:</label>
-          <input type="password" id="confirm_password" />
+          <input
+            type="password"
+            id="confirm_password"
+            onChange={(event) => {
+              setConfirmPassword(event.target.value);
+            }}
+          />
           <button>Register</button>
         </form>
       )}
