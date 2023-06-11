@@ -22,11 +22,11 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div>
+        <div className="Layout">
           <Header pageTitle="Project Auth" />
           <main>
-            <div className="500">
-              <h1>500 - Internal Server Error</h1>
+            <div className="500 column">
+              <h1>Something went wrong...</h1>
               <a href="/">
                 <button>Home</button>
               </a>

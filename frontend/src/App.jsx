@@ -2,12 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import "./style/App.css";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
-import ApiLayout from "./components/api/ApiLayout";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import ApiLayout from "./components/api/ApiLayout";
 import ApiHome from "./components/api/ApiHome";
 import NotesList from "./components/api/notes/NotesList";
 import UserDetails from "./components/api/users/UserDetails";
+import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
 
@@ -27,7 +28,8 @@ function App() {
           <Route path="notes" element={<NotesList />} />
           <Route path="users" element={<UserDetails />} />
         </Route>
-        {/*404*/}
+        {/*Error*/}
+        <Route path="err" element={<Error />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </ErrorBoundary>

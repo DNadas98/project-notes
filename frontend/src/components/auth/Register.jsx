@@ -16,7 +16,8 @@ function Register() {
       }
       const valid = true;
       if (valid) {
-        const url = "http://127.0.0.1:3001/users";
+        const apiUrl = "http://127.0.0.1:3501/api"; /*process.env.REACT_APP_API_URL;*/
+        const url = `${apiUrl}/users`;
         const reqBody = JSON.stringify({ "username": username, "password": password });
         const httpResponse = await fetch(url, {
           method: "POST",

@@ -33,10 +33,10 @@ server.use(cookieParser());
 server.use(logRequest);
 
 //Routing
-server.use("/auth", authRouter);
-server.use("/users", userRouter);
-server.use("/notes", notesRouter);
-server.use("/admin", adminRouter);
+server.use("/api/auth", authRouter);
+server.use("/api/users", userRouter);
+server.use("/api/notes", notesRouter);
+server.use("/api/admin", adminRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {
