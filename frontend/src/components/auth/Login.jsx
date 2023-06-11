@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useApiFetch from "../../hooks/useApiFetch";
 
 function Login() {
   const { setAuth } = useAuth();
+  const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const [username, setUsername] = useState(null);
@@ -19,18 +21,10 @@ function Login() {
       }
       const valid = true;
       if (valid) {
-        const apiUrl = "http://127.0.0.1:3501/api"; //process.env.REACT_APP_API_URL;
-        const url = `${apiUrl}/auth/login`;
-        const reqBody = JSON.stringify({ "username": username, "password": password });
-        const httpResponse = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include" /* include cookies and auth header */,
-          body: reqBody
+        const { httpResponse, responseObject } = await apiFetch("POST", "auth/login", {
+          "username": username,
+          "password": password
         });
-        const responseObject = await httpResponse.json();
         const accessToken = responseObject?.accessToken;
         if (httpResponse?.status === 200 && accessToken) {
           setAuth({ "username": username, "accessToken": accessToken });

@@ -13,11 +13,13 @@ function useApiFetch() {
         const reqConfig = {
           method: `${reqMethod}`,
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${auth.accessToken}`
+            "Content-Type": "application/json"
           },
           credentials: "include"
         };
+        if (auth?.accessToken) {
+          reqConfig.headers.Authorization = `Bearer ${auth.accessToken}`;
+        }
         if (reqBody) {
           reqConfig.body = JSON.stringify(reqBody);
         }

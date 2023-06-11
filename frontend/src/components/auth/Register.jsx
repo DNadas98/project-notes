@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
+import useApiFetch from "../../hooks/useApiFetch";
 
 function Register() {
+  const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const location = useLocation();
@@ -22,24 +24,17 @@ function Register() {
         validInput = false;
       }
       if (validInput) {
-        const apiUrl = "http://127.0.0.1:3501/api"; /*process.env.REACT_APP_API_URL;*/
-        const url = `${apiUrl}/users`;
-        const reqBody = JSON.stringify({ "username": username, "password": password });
-        const httpResponse = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: reqBody
+        const { httpResponse, responseObject } = await apiFetch("POST", "users", {
+          "username": username,
+          "password": password
         });
-        const responseObject = await httpResponse.json();
         setResultMessage(responseObject.message);
         if (httpResponse.status === 201) {
           setSuccessful(true);
         }
       }
     } catch (err) {
-      setResultMessage("Error");
+      setResultMessage("Failed to create user");
     }
   }
 
