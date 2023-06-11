@@ -37,7 +37,7 @@ function UserNotesList() {
             .sort((a, b) => a.title.localeCompare(b.title))
             .map((note) => {
               return (
-                <li key={note._id} className="column">
+                <li key={note._id}>
                   <h2>{note.title}</h2>
                   <p>{note.completed ? "Completed" : "Not completed yet"}</p>
                   <p>{note.text}</p>

@@ -11,7 +11,10 @@ function AdminHome() {
       <h2>Admin Panel</h2>
       <p>{todaysDate}</p>
       <Link to="/admin/users">
-        <button>View all users</button>
+        <button>List users</button>
+      </Link>
+      <Link to="/user">
+        <button>User Panel</button>
       </Link>
       <Link to="/">
         <button
