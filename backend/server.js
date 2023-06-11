@@ -1,12 +1,12 @@
 require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
 const mongoose = require("mongoose");
-const connectToDatabase = require("./config/dbConnection");
+const connectToDatabase = require("./middleware/dbConnection");
 const helmet = require("helmet");
 const rateLimiter = require("./middleware/rateLimiter");
 const banned = require("./middleware/banned");
 const cors = require("cors");
-const corsOptions = require("./config/corsOptions");
+const corsOptions = require("./middleware/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 const authRouter = require("./routes/api/auth.js");

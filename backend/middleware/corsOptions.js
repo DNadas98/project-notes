@@ -1,5 +1,5 @@
-const allowedOrigins = require("./corsAllowedOrigins");
-const { logError } = require("../middleware/logger");
+const allowedOrigins = require("../config/corsAllowedOrigins");
+const { logError } = require("./logger");
 
 const corsOptions = {
   methods: ["GET", "POST", "PATCH", "DELETE"],
@@ -13,7 +13,8 @@ const corsOptions = {
       callback(err);
     }
   },
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  credentials: true
 };
 
 module.exports = corsOptions;

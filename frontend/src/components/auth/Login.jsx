@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import AuthContext from "../../context/AuthProvider";
 
 function Login() {
+  const { setAuth } = useContext(AuthContext);
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const [username, setUsername] = useState(null);
@@ -16,7 +18,7 @@ function Login() {
       }
       const valid = true;
       if (valid) {
-        const apiUrl = "http://127.0.0.1:3501/api"; /*process.env.REACT_APP_API_URL;*/
+        const apiUrl = "http://127.0.0.1:3501/api"; //process.env.REACT_APP_API_URL;
         const url = `${apiUrl}/auth/login`;
         const reqBody = JSON.stringify({ "username": username, "password": password });
         const httpResponse = await fetch(url, {
@@ -24,19 +26,23 @@ function Login() {
           headers: {
             "Content-Type": "application/json"
           },
+          credentials: "include" /* include cookies and auth header */,
           body: reqBody
         });
         const responseObject = await httpResponse.json();
-        if (httpResponse?.status === 200 /*&& responseObject?.accessToken*/) {
+        const accessToken = responseObject?.accessToken;
+        console.log(httpResponse);
+        console.log(responseObject);
+        if (httpResponse?.status === 200 && accessToken) {
           setResultMessage("Login successful");
-          //const
+          setAuth(username, password, accessToken);
           setSuccessful(true);
         } else if (responseObject?.message) {
           setResultMessage(responseObject.message);
         }
       }
     } catch (err) {
-      setResultMessage("Error");
+      setResultMessage("Login failed");
     }
   }
 

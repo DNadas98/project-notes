@@ -39,7 +39,8 @@ button {
 }
 input:hover,
 input:focus,
-button:hover {
+button:hover,
+button:focus-visible {
   background-color: var(--light);
   color: var(--dark);
 }

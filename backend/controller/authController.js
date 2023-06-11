@@ -10,7 +10,7 @@ async function login(req, res, next) {
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required" });
-    } /*
+    }
     const foundUser = await User.findOne({ username }).exec();
     if (!foundUser || !foundUser.active || typeof password !== "string") {
       return res.status(401).json({ message: "Unauthorized" });
@@ -36,9 +36,9 @@ async function login(req, res, next) {
       secure: true, //https
       sameSite: "None", //cross-site cookie
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
-    });*/
+    });
     //client app never handles refresh token, only the server
-    return res.status(200).json({ message: "success" /*accessToken*/ });
+    return res.status(200).json({ "accessToken": accessToken });
   } catch (err) {
     logError(err, req);
     return next(err);
@@ -48,7 +48,6 @@ async function login(req, res, next) {
 //GET /auth/refresh
 async function refresh(req, res) {
   try {
-    /*
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
     const refreshToken = cookies.jwt;
@@ -69,8 +68,8 @@ async function refresh(req, res) {
       { "UserInfo": { "userid": userid, "roles": roles } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
-    );*/
-    return res.status(200).json({ message: "success" } /*accessToken*/);
+    );
+    return res.status(200).json({ "accessToken": accessToken });
   } catch (err) {
     logError(err, req);
     return res.status(401).json({ message: "Unauthorized" });
@@ -80,13 +79,12 @@ async function refresh(req, res) {
 //GET /auth/logout
 function logout(req, res, next) {
   try {
-    /*
     const cookies = req.cookies;
     if (!cookies?.jwt) {
       return res.status(204).json({ message: "No content" });
     }
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-    */ return res.status(200).json({ message: "Logout successful" });
+    return res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     logError(err, req);
     return next(err);

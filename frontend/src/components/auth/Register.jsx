@@ -4,18 +4,24 @@ import { Link } from "react-router-dom";
 function Register() {
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
 
   async function handleSubmit(event) {
     try {
       event.preventDefault();
-      if (!username || !password) {
+      const username = event.target[0].value;
+      const password = event.target[1].value;
+      const confirmPassword = event.target[2].value;
+      console.log(username, password, confirmPassword);
+      let validInput = true;
+      if (!username || !password || !confirmPassword) {
         setResultMessage("All fields are required");
-        return;
+        validInput = false;
       }
-      const valid = true;
-      if (valid) {
+      if (password !== confirmPassword) {
+        setResultMessage("Passwords don't match");
+        validInput = false;
+      }
+      if (validInput) {
         const apiUrl = "http://127.0.0.1:3501/api"; /*process.env.REACT_APP_API_URL;*/
         const url = `${apiUrl}/users`;
         const reqBody = JSON.stringify({ "username": username, "password": password });
@@ -53,21 +59,11 @@ function Register() {
           }}
         >
           <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-          />
+          <input type="text" id="username" />
           <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-          />
+          <input type="password" id="password" />
+          <label htmlFor="confirm_password">Confirm password:</label>
+          <input type="password" id="confirm_password" />
           <button>Register</button>
         </form>
       )}

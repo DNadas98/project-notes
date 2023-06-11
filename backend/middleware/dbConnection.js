@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { logError } = require("../middleware/logger");
+const { logError } = require("./logger");
 
 async function connectToDatabase() {
   try {
