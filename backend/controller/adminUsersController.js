@@ -11,7 +11,7 @@ async function getAllUsers(req, res, next) {
     if (!users || !Array.isArray(users) || !users.length >= 1) {
       return res.status(404).json({ message: "No users found" });
     }
-    return res.status(200).json(users);
+    return res.status(200).json({ "data": users });
   } catch (err) {
     logError(err, req);
     return next(err);

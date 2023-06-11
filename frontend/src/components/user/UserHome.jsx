@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import React from "react";
 import format from "date-fns/format";
+import useLogout from "../../hooks/useLogout";
 
 function UserHome() {
+  const logout = useLogout();
   const todaysDate = format(new Date(), "yyyy. MM. dd.");
   return (
     <div className="UserHome column">
@@ -13,9 +15,13 @@ function UserHome() {
       <Link to="/user/settings">
         <button>User settings</button>
       </Link>
-      <Link to="/">
-        <button>Logout</button>
-      </Link>
+      <button
+        onClick={async () => {
+          await logout();
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 }

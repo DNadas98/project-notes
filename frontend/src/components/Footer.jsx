@@ -5,7 +5,7 @@ function Footer({ pageTitle, name }) {
   return (
     <footer>
       <h2 className="inline">
-        {pageTitle} | {year} ©
+        {pageTitle} | {year} ©{" "}
         <a rel="noreferrer" target="_blank" href="https://github.com/DNadas98">
           {name}
         </a>

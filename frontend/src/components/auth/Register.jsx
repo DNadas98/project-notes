@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 
 function Register() {
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
+  const location = useLocation();
 
   async function handleSubmit(event) {
     try {
@@ -11,7 +12,6 @@ function Register() {
       const username = event.target[0].value;
       const password = event.target[1].value;
       const confirmPassword = event.target[2].value;
-      console.log(username, password, confirmPassword);
       let validInput = true;
       if (!username || !password || !confirmPassword) {
         setResultMessage("All fields are required");
@@ -48,9 +48,7 @@ function Register() {
       <h1>Register</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to register</p>}
       {successful ? (
-        <Link to="/login">
-          <button>Login</button>
-        </Link>
+        <Navigate to="/login" state={{ from: location }} replace />
       ) : (
         <form
           className="column"
