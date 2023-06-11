@@ -35,7 +35,7 @@ function UsersList() {
         <ul className="column">
           {users.map((user) => {
             return (
-              <li key={user._id} className="column">
+              <li key={user._id}>
                 <h2>{user.username}</h2>
                 <p>{user.active ? "Active" : "Inactive"}</p>
                 <p>Roles: {user.roles.join(", ")}</p>
