@@ -1,7 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { logError } = require("../logger");
-/*
-const User = require("../../model/schemas/User");*/
 
 function verifyJWT(req, res, next) {
   try {
@@ -9,8 +7,10 @@ function verifyJWT(req, res, next) {
     if (!authHeader?.startsWith("Bearer")) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const accessToken = authHeader.split(" ")[1];
+    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, {
+      algorithms: ["HS256"]
+    });
     if (!decoded) {
       return res.status(401).json({ message: "Unauthorized" });
     }

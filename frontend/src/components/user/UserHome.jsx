@@ -2,16 +2,15 @@ import { Link } from "react-router-dom";
 import React from "react";
 import format from "date-fns/format";
 
-function ApiHome() {
+function UserHome() {
   const todaysDate = format(new Date(), "yyyy. MM. dd.");
   return (
-    <div className="ApiHome column">
+    <div className="UserHome column">
       <p>{todaysDate}</p>
-      <h1>Welcome!</h1>
-      <Link to="/api/notes">
+      <Link to="/user/notes">
         <button>Your notes</button>
       </Link>
-      <Link to="/api/users">
+      <Link to="/user/settings">
         <button>User settings</button>
       </Link>
       <Link to="/">
@@ -21,4 +20,4 @@ function ApiHome() {
   );
 }
 
-export default ApiHome;
+export default UserHome;

@@ -1,13 +1,14 @@
 import { Route, Routes } from "react-router-dom";
 import "./style/App.css";
+import RequireAuth from "./components/auth/RequireAuth";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import ApiLayout from "./components/api/ApiLayout";
-import ApiHome from "./components/api/ApiHome";
-import NotesList from "./components/api/notes/NotesList";
-import UserDetails from "./components/api/users/UserDetails";
+import UserLayout from "./components/user/UserLayout";
+import UserHome from "./components/user/UserHome";
+import UserNotesList from "./components/user/notes/UserNotesList";
+import UserDetails from "./components/user/users/UserSettings";
 import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
@@ -23,10 +24,12 @@ function App() {
           <Route path="register" element={<Register />} />
         </Route>
         {/*restricted*/}
-        <Route path="api" element={<ApiLayout />}>
-          <Route index element={<ApiHome />} />
-          <Route path="notes" element={<NotesList />} />
-          <Route path="users" element={<UserDetails />} />
+        <Route element={<RequireAuth />}>
+          <Route path="user" element={<UserLayout />}>
+            <Route index element={<UserHome />} />
+            <Route path="notes" element={<UserNotesList />} />
+            <Route path="settings" element={<UserDetails />} />
+          </Route>
         </Route>
         {/*Error*/}
         <Route path="err" element={<Error />} />

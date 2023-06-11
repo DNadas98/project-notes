@@ -5,7 +5,7 @@ const { getNotes, createNote, updateNote, deleteNote } = require("../../controll
 
 const router = express.Router();
 
-//router.use(verifyJWT, verifyUser);
+router.use(verifyJWT, verifyUser);
 
 router.route("/").get(getNotes).post(createNote).patch(updateNote).delete(deleteNote);
 

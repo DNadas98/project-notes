@@ -23,12 +23,12 @@ async function login(req, res, next) {
     const accessToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     const refreshToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     //create cookie
     res.cookie("jwt", refreshToken, {
@@ -37,7 +37,9 @@ async function login(req, res, next) {
       sameSite: "None", //cross-site cookie
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    //client app never handles refresh token, only the server
+    /*access token:
+        stored in a React state
+        fetch: Authorization header, `Bearer ${accessToken}`*/
     return res.status(200).json({ "accessToken": accessToken });
   } catch (err) {
     logError(err, req);
@@ -51,7 +53,7 @@ async function refresh(req, res) {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
     const refreshToken = cookies.jwt;
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
     if (!decoded?.UserInfo?.userid || !decoded?.UserInfo?.roles) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -65,9 +67,9 @@ async function refresh(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const accessToken = jwt.sign(
-      { "UserInfo": { "userid": userid, "roles": roles } },
+      { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     return res.status(200).json({ "accessToken": accessToken });
   } catch (err) {

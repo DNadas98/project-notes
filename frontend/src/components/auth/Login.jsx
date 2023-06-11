@@ -1,13 +1,14 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import AuthContext from "../../context/AuthProvider";
+import React, { useState } from "react";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
+  const location = useLocation();
 
   async function handleSubmit(event) {
     try {
@@ -31,11 +32,8 @@ function Login() {
         });
         const responseObject = await httpResponse.json();
         const accessToken = responseObject?.accessToken;
-        console.log(httpResponse);
-        console.log(responseObject);
         if (httpResponse?.status === 200 && accessToken) {
-          setResultMessage("Login successful");
-          setAuth(username, password, accessToken);
+          setAuth({ "username": username, "accessToken": accessToken });
           setSuccessful(true);
         } else if (responseObject?.message) {
           setResultMessage(responseObject.message);
@@ -51,9 +49,7 @@ function Login() {
       <h1>Login</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to log in</p>}
       {successful ? (
-        <Link to="/api">
-          <button>Api</button>
-        </Link>
+        <Navigate to="/user" state={{ from: location }} />
       ) : (
         <form
           className="column"

@@ -13,7 +13,7 @@ const {
 
 const router = express.Router();
 
-//router.use(verifyJWT, verifyUser, (req, res, next) => verifyRoles(req, res, next, ["Admin"]));
+router.use(verifyJWT, verifyUser, (req, res, next) => verifyRoles(req, res, next, ["Admin"]));
 
 router.route("/users").get(getAllUsers).patch(updateUserById).delete(deleteUserById);
 router.route("/notes").get(getNotesOfUser).post(createNote).patch(updateNote).delete(deleteNote);

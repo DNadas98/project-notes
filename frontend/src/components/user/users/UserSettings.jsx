@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function UserDetails() {
+function UserSettings() {
   function handleSubmit(event) {
     event.preventDefault();
   }
   return (
-    <div className="UserDetails column">
+    <div className="UserSettings column">
       <h1>User settings</h1>
       <form
         className="column"
@@ -20,11 +20,11 @@ function UserDetails() {
         <input type="password" id="password" />
         <button>Send</button>
       </form>
-      <Link to="/api">
+      <Link to="/user">
         <button>Back</button>
       </Link>
     </div>
   );
 }
 
-export default UserDetails;
+export default UserSettings;
