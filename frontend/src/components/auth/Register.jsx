@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import useApiFetch from "../../hooks/useApiFetch";
+import BackButton from "../BackButton";
 
 function Register() {
   const apiFetch = useApiFetch();
@@ -24,7 +25,7 @@ function Register() {
         validInput = false;
       }
       if (validInput) {
-        const { httpResponse, responseObject } = await apiFetch("POST", "users", {
+        const { httpResponse, responseObject } = await apiFetch("POST", "user", {
           "username": username,
           "password": password
         });
@@ -78,9 +79,7 @@ function Register() {
           <button>Register</button>
         </form>
       )}
-      <Link to="/">
-        <button>Back</button>
-      </Link>
+      <BackButton />
     </div>
   );
 }

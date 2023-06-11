@@ -1,6 +1,4 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
 
 //https://legacy.reactjs.org/docs/error-boundaries.html
 class ErrorBoundary extends React.Component {
@@ -22,17 +20,11 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="Layout">
-          <Header pageTitle="Project Auth" />
-          <main>
-            <div className="500 column">
-              <h1>Something went wrong...</h1>
-              <a href="/">
-                <button>Home</button>
-              </a>
-            </div>
-          </main>
-          <Footer pageTitle="Project Auth" name="Daniel Nadas" />
+        <div className="Error">
+          <h1>Something went wrong...</h1>
+          <a href="/">
+            <button>Home</button>
+          </a>
         </div>
       );
     }

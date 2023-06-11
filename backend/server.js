@@ -34,7 +34,7 @@ server.use(logRequest);
 
 //Routing
 server.use("/api/auth", authRouter);
-server.use("/api/users", userRouter);
+server.use("/api/user", userRouter);
 server.use("/api/notes", notesRouter);
 server.use("/api/admin", adminRouter);
 

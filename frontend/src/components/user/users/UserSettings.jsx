@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import useApiFetch from "../../../hooks/useApiFetch";
 import useLogout from "../../../hooks/useLogout";
+import BackButton from "../../BackButton";
 
 function UserSettings() {
   const apiFetch = useApiFetch();
@@ -79,9 +79,7 @@ function UserSettings() {
         />
         <button>Send</button>
       </form>
-      <Link to="/user">
-        <button>Back</button>
-      </Link>
+      <BackButton />
     </div>
   );
 }

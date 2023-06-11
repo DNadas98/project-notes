@@ -19,7 +19,7 @@ async function login(req, res, next) {
     if (!pwdMatching) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    //create accesstoken, refreshtoken
+    //create accessToken, refreshToken
     const accessToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
@@ -37,10 +37,11 @@ async function login(req, res, next) {
       sameSite: "None", //cross-site cookie
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    /*access token:
-        stored in a React state
-        fetch: Authorization header, `Bearer ${accessToken}`*/
-    return res.status(200).json({ "accessToken": accessToken });
+    /*accessToken: stored in a React state
+      fetch: Authorization header, `Bearer ${accessToken}`*/
+    return res
+      .status(200)
+      .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
   } catch (err) {
     logError(err, req);
     return next(err);

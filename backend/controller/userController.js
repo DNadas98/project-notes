@@ -69,7 +69,7 @@ async function updateUser(req, res, next) {
   }
 }
 
-//DELETE /users
+//DELETE /user
 async function deleteUser(req, res, next) {
   try {
     const userid = req.userid;

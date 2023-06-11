@@ -25,11 +25,15 @@ function Login() {
           "password": password
         });
         const accessToken = responseObject?.accessToken;
-        if (httpResponse?.status === 200 && accessToken) {
-          setAuth({ "username": username, "accessToken": accessToken });
+        const receivedUsername = responseObject?.username;
+        const receivedRoles = responseObject?.roles;
+        if (httpResponse?.status === 200 && accessToken && receivedUsername && receivedRoles) {
+          setAuth({ "username": receivedUsername, "roles": receivedRoles, "accessToken": accessToken });
           setSuccessful(true);
         } else if (responseObject?.message) {
           setResultMessage(responseObject.message);
+        } else {
+          throw new Error("");
         }
       }
     } catch (err) {

@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import useApiFetch from "../../../hooks/useApiFetch";
 import BackButton from "../../BackButton";
 
-function UserNotesList() {
+function UsersList() {
   const apiFetch = useApiFetch();
   const [loading, setLoading] = useState(true);
-  const [userNotes, setUserNotes] = useState(null);
+  const [users, setUsers] = useState(null);
   const [resMessage, setResMessage] = useState(null);
 
   useEffect(() => {
-    async function getUserNotes() {
+    async function getUsers() {
       try {
-        const { responseObject } = await apiFetch("GET", "notes");
+        const { responseObject } = await apiFetch("GET", "admin/users");
         if (responseObject?.data) {
-          setUserNotes(responseObject.data);
+          setUsers(responseObject.data);
         } else if (responseObject?.message) {
           setResMessage(responseObject.message);
         }
@@ -23,27 +23,25 @@ function UserNotesList() {
         setLoading(false);
       }
     }
-    getUserNotes();
+    getUsers();
   }, [apiFetch]);
 
   return (
-    <div className="UserNotesList column">
-      <h1>User notes</h1>
+    <div className="UsersList column">
+      <h1>Users</h1>
       {loading ? (
         <h2>Loading...</h2>
-      ) : userNotes ? (
+      ) : users ? (
         <ul className="column">
-          {userNotes
-            .sort((a, b) => a.title.localeCompare(b.title))
-            .map((note) => {
-              return (
-                <li key={note._id} className="column">
-                  <h2>{note.title}</h2>
-                  <p>{note.completed ? "Completed" : "Not completed yet"}</p>
-                  <p>{note.text}</p>
-                </li>
-              );
-            })}
+          {users.map((user) => {
+            return (
+              <li key={user._id} className="column">
+                <h2>{user.username}</h2>
+                <p>{user.active ? "Active" : "Inactive"}</p>
+                <p>Roles: {user.roles.join(", ")}</p>
+              </li>
+            );
+          })}
         </ul>
       ) : resMessage ? (
         <h2>{resMessage}</h2>
@@ -55,4 +53,4 @@ function UserNotesList() {
   );
 }
 
-export default UserNotesList;
+export default UsersList;

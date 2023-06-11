@@ -105,6 +105,19 @@ main {
   gap: 20px;
 }
 
+.Unauthorized,
+.NotFound,
+.Error {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  font-size: 1.25rem;
+}
+
 .column {
   display: flex;
   flex-direction: column;

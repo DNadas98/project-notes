@@ -2,26 +2,17 @@ import { Link } from "react-router-dom";
 import React from "react";
 import format from "date-fns/format";
 import useLogout from "../../hooks/useLogout";
-import useAuth from "../../hooks/useAuth";
 
-function UserHome() {
+function AdminHome() {
   const logout = useLogout();
-  const { auth } = useAuth();
   const todaysDate = format(new Date(), "yyyy. MM. dd.");
   return (
-    <div className="UserHome column">
+    <div className="AdminHome column">
+      <h2>Admin Panel</h2>
       <p>{todaysDate}</p>
-      <Link to="/user/notes">
-        <button>Your notes</button>
+      <Link to="/admin/users">
+        <button>View all users</button>
       </Link>
-      <Link to="/user/settings">
-        <button>User settings</button>
-      </Link>
-      {auth?.roles?.includes("Admin") && (
-        <Link to="/admin">
-          <button>Admin Panel</button>
-        </Link>
-      )}
       <Link to="/">
         <button
           onClick={async () => {
@@ -35,4 +26,4 @@ function UserHome() {
   );
 }
 
-export default UserHome;
+export default AdminHome;
