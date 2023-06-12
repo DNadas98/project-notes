@@ -145,8 +145,10 @@
   - sent and stored in cookie (HTTP only, sameSite, secure)
   - can not issue new refresh token
 - if at any point there is a 401 or 403 status code:
-  - clear jwt cookie
-  - redirect to /login
+  - try to refresh, update auth context, send request again
+  - failed:
+    - clear jwt cookie
+    - redirect to /login
 
 ### Style
 
