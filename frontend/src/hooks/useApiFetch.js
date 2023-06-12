@@ -32,7 +32,8 @@ function useApiFetch() {
             reqConfig.headers.Authorization = `Bearer ${refreshedAccessToken}`;
             httpResponse = await fetch(url, reqConfig);
             if (httpResponse.status === 401 || httpResponse.status === 403) {
-              return await logout();
+              await logout();
+              return null;
             }
           }
         }

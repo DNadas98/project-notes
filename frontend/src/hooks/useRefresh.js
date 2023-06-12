@@ -23,10 +23,13 @@ function useRefresh() {
         });
         return responseObject.accessToken;
       } else {
-        return await logout();
+        await logout();
+        return null;
       }
     } catch (err) {
       console.error(err);
+      await logout();
+      return null;
     }
   }
   return refresh;
