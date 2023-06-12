@@ -1,10 +1,12 @@
 import { useCallback } from "react";
 import useAuth from "./useAuth";
 import useLogout from "./useLogout";
+import useRefresh from "./useRefresh";
 
 function useApiFetch() {
   const { auth, setAuth } = useAuth();
   const logout = useLogout();
+  const refresh = useRefresh();
   const apiUrl = "http://127.0.0.1:3501/api";
   const apiFetch = useCallback(
     async (reqMethod, reqPath, reqBody) => {
@@ -23,9 +25,16 @@ function useApiFetch() {
         if (reqBody) {
           reqConfig.body = JSON.stringify(reqBody);
         }
-        const httpResponse = await fetch(url, reqConfig);
+        let httpResponse = await fetch(url, reqConfig);
         if (httpResponse.status === 401 || httpResponse.status === 403) {
-          await logout();
+          const refreshedAccessToken = await refresh();
+          if (refreshedAccessToken) {
+            reqConfig.headers.Authorization = `Bearer ${refreshedAccessToken}`;
+            httpResponse = await fetch(url, reqConfig);
+            if (httpResponse.status === 401 || httpResponse.status === 403) {
+              return await logout();
+            }
+          }
         }
         const responseObject = await httpResponse.json();
         return { "httpResponse": httpResponse, "responseObject": responseObject };

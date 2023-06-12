@@ -62,15 +62,15 @@
 
 ### API `/auth`
 
-- --> loginLimiter -->
 - `POST /login`: login
+  - --> loginLimiter -->
   - requires:
     - username: string, password: string in request body
   - possible results:
     - response: 4xx, json error message
     - response: 200, body: new JWT access token, cookie: new JWT refresh token
-- --> verifyJWT --> verifyUser
 - `GET /refresh`: refresh
+  - --> verifyJWT --> verifyUser -->
   - requires:
     - cookie: JWT refresh token
   - possible results:
@@ -126,15 +126,28 @@
 
 # Frontend: React
 
-# Config
+### Config
 
 - frontend/.env
 
-# React routing
+### React routing
 
+- react-router-dom 6
 - App.js
-- layout: Layout.js
 
-# Style
+### [JWT Strategy](https://youtu.be/nI8PYZNFtac?list=PL0Zuz27SZ-6PRCpm9clX0WiBEMB70FWwd&t=106)
+
+- Goal: reduce risk of [XSS](https://owasp.org/www-community/attacks/xss/), [CSRF](https://owasp.org/www-community/attacks/csrf)
+- access token
+  - sent in response body, stored in React context
+  - fetch: Authorization header
+- refresh token
+  - sent and stored in cookie (HTTP only, sameSite, secure)
+  - can not issue new refresh token
+- if at any point there is a 401 or 403 status code:
+  - clear jwt cookie
+  - redirect to /login
+
+### Style
 
 - Flex layout
