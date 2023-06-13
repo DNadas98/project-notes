@@ -4,7 +4,7 @@ import useLogout from "./useLogout";
 import useRefresh from "./useRefresh";
 
 function useApiFetch() {
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
   const logout = useLogout();
   const refresh = useRefresh();
   const apiUrl = "http://127.0.0.1:3501/api";
@@ -44,7 +44,7 @@ function useApiFetch() {
         console.error(err);
       }
     },
-    [setAuth, logout]
+    [auth.accessToken, logout]
   );
 
   return apiFetch;

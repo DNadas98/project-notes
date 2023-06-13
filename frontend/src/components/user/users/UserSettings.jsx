@@ -30,8 +30,7 @@ function UserSettings() {
         if (password) {
           requestBody.newPassword = password;
         }
-        const { httpResponse, responseObject } = await apiFetch("PATCH", "users", requestBody);
-        console.log(httpResponse);
+        const { httpResponse, responseObject } = await apiFetch("PATCH", "user", requestBody);
         if (httpResponse.status === 200 && responseObject?.message) {
           await logout();
         }
