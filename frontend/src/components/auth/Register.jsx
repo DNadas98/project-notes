@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import useApiFetch from "../../hooks/useApiFetch";
 import BackButton from "../BackButton";
 
 function Register() {
+  const location = useLocation();
   const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
-  const location = useLocation();
+  const usernameRef = useRef();
+  const passwordRef = useRef();
+  const confirmPasswordRef = useRef();
 
   async function handleSubmit(event) {
     try {
       event.preventDefault();
+      const username = usernameRef.current.value;
+      const password = passwordRef.current.value;
+      const confirmPassword = confirmPasswordRef.current.value;
       let validInput = true;
       if (!username || !password || !confirmPassword) {
         setResultMessage("All fields are required");
@@ -53,29 +56,11 @@ function Register() {
           }}
         >
           <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-          />
+          <input type="text" id="username" ref={usernameRef} />
           <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-          />
+          <input type="password" id="password" ref={passwordRef} />
           <label htmlFor="confirm_password">Confirm password:</label>
-          <input
-            type="password"
-            id="confirm_password"
-            onChange={(event) => {
-              setConfirmPassword(event.target.value);
-            }}
-          />
+          <input type="password" id="confirm_password" ref={confirmPasswordRef} />
           <button>Register</button>
         </form>
       )}

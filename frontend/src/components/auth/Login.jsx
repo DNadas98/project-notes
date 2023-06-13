@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useApiFetch from "../../hooks/useApiFetch";
@@ -9,11 +9,14 @@ function Login() {
   const apiFetch = useApiFetch();
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const usernameRef = useRef();
+  const passwordRef = useRef();
+
   async function handleSubmit(event) {
     try {
       event.preventDefault();
+      const username = usernameRef.current.value;
+      const password = passwordRef.current.value;
       if (!username || !password) {
         setResultMessage("All fields are required");
         return;
@@ -55,21 +58,9 @@ function Login() {
           }}
         >
           <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-          />
+          <input type="text" id="username" ref={usernameRef} />
           <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-          />
+          <input type="password" id="password" ref={passwordRef} />
           <button>Login</button>
         </form>
       )}

@@ -26,7 +26,7 @@ function useApiFetch() {
           reqConfig.body = JSON.stringify(reqBody);
         }
         let httpResponse = await fetch(url, reqConfig);
-        if (httpResponse.status === 401 || httpResponse.status === 403) {
+        if ((reqPath !== "auth/login" && httpResponse.status === 401) || httpResponse.status === 403) {
           const refreshResponse = await refresh();
           const refreshedAccessToken = refreshResponse?.accessToken;
           if (refreshedAccessToken) {
