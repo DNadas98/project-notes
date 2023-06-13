@@ -32,13 +32,11 @@ async function login(req, res, next) {
     );
     //create cookie
     res.cookie("jwt", refreshToken, {
-      httpOnly: true, //only accessible by webserver
-      secure: true, //https
-      sameSite: "None", //cross-site cookie
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    /*accessToken: stored in a React state
-      fetch: Authorization header, `Bearer ${accessToken}`*/
     return res
       .status(200)
       .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
@@ -72,7 +70,9 @@ async function refresh(req, res) {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
-    return res.status(200).json({ "accessToken": accessToken });
+    return res
+      .status(200)
+      .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
   } catch (err) {
     logError(err, req);
     return res.status(401).json({ message: "Unauthorized" });

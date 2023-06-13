@@ -1,17 +1,18 @@
 import React from "react";
-import { useLocation, Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Unauthorized from "./Unauthorized.jsx";
+import RefreshHandler from "./RefreshHandler";
 
 function RequireAuth({ allowedRoles }) {
   const { auth } = useAuth();
-  const location = useLocation();
-  if (auth?.username && auth?.accessToken && auth?.roles?.find((role) => allowedRoles.includes(role))) {
+  const hasAuthState = auth?.username && auth?.accessToken && auth?.roles;
+  if (hasAuthState && auth.roles?.find((role) => allowedRoles.includes(role))) {
     return <Outlet />;
-  } else if (auth?.username && auth?.accessToken) {
+  } else if (hasAuthState) {
     return <Unauthorized />;
   } else {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <RefreshHandler allowedRoles={allowedRoles} />;
   }
 }
 

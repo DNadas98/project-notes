@@ -27,7 +27,8 @@ function useApiFetch() {
         }
         let httpResponse = await fetch(url, reqConfig);
         if (httpResponse.status === 401 || httpResponse.status === 403) {
-          const refreshedAccessToken = await refresh();
+          const refreshResponse = await refresh();
+          const refreshedAccessToken = refreshResponse?.accessToken;
           if (refreshedAccessToken) {
             reqConfig.headers.Authorization = `Bearer ${refreshedAccessToken}`;
             httpResponse = await fetch(url, reqConfig);

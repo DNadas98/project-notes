@@ -16,12 +16,19 @@ function useRefresh() {
         credentials: "include"
       });
       const responseObject = await httpResponse.json();
-      console.log(httpResponse, "REFRESH");
-      if (responseObject?.accessToken) {
-        setAuth((previousState) => {
-          return { ...previousState, accessToken: responseObject.accessToken };
+      console.log("refresh\n", responseObject, "\n");
+      if (
+        httpResponse?.status === 200 &&
+        responseObject?.username &&
+        responseObject?.roles &&
+        responseObject.accessToken
+      ) {
+        setAuth({
+          "username": responseObject.username,
+          "roles": responseObject.roles,
+          "accessToken": responseObject?.accessToken
         });
-        return responseObject.accessToken;
+        return responseObject;
       } else {
         await logout();
         return null;
