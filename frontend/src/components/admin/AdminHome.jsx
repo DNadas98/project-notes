@@ -6,9 +6,7 @@ import useRefresh from "../../hooks/useRefresh";
 
 function AdminHome() {
   const logout = useLogout();
-  /**/
   const refresh = useRefresh();
-  /**/
   const todaysDate = format(new Date(), "yyyy. MM. dd.");
   return (
     <div className="AdminHome column">
@@ -17,18 +15,16 @@ function AdminHome() {
       <Link to="/admin/users">
         <button>List users</button>
       </Link>
-      <Link to="/user">
-        <button>User Panel</button>
-      </Link>
-      {/**/}
       <button
         onClick={() => {
           refresh();
         }}
       >
-        Refresh
+        Test refresh
       </button>
-      {/**/}
+      <Link to="/user">
+        <button>User Panel</button>
+      </Link>
       <Link to="/">
         <button
           onClick={async () => {

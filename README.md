@@ -70,7 +70,6 @@
     - response: 4xx, json error message
     - response: 200, body: new JWT access token, cookie: new JWT refresh token
 - `GET /refresh`: refresh
-  - --> verifyJWT --> verifyUser -->
   - requires:
     - cookie: JWT refresh token
   - possible results:
