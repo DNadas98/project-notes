@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useRefresh from "../../hooks/useRefresh";
+import useRefresh from "../../hooks/auth/useRefresh";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 function RefreshHandler({ allowedRoles }) {

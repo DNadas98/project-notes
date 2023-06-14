@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import useAuth from "./useAuth";
-import useLogout from "./useLogout";
-import useRefresh from "./useRefresh";
+import useAuth from "./auth/useAuth";
+import useLogout from "./auth/useLogout";
+import useRefresh from "./auth/useRefresh";
 
 function useApiFetch() {
   const { auth } = useAuth();

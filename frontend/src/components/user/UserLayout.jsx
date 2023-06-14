@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import React from "react";
 import UserHeader from "./UserHeader";
 import Footer from "../Footer";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/auth/useAuth";
 
 function UserLayout() {
   const { auth } = useAuth();

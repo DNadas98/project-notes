@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import React from "react";
 import format from "date-fns/format";
-import useLogout from "../../hooks/useLogout";
-import useAuth from "../../hooks/useAuth";
+import useLogout from "../../hooks/auth/useLogout";
+import useAuth from "../../hooks/auth/useAuth";
 
 function UserHome() {
   const logout = useLogout();

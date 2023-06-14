@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/auth/useAuth";
 import useApiFetch from "../../hooks/useApiFetch";
 
 function Login() {

@@ -7,13 +7,13 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import UserLayout from "./components/user/UserLayout";
 import UserHome from "./components/user/UserHome";
-import UserNotesList from "./components/user/notes/UserNotesList";
-import UserDetails from "./components/user/users/UserSettings";
+import UserDetails from "./components/user/UserSettings";
+import UserNotesList from "./components/notes/UserNotesList";
+import UsersList from "./components/admin/users/UsersList";
+import AdminHome from "./components/admin/AdminHome";
 import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
-import UsersList from "./components/admin/users/UsersList";
-import AdminHome from "./components/admin/AdminHome";
 
 function App() {
   return (

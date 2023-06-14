@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import useApiFetch from "../../../hooks/useApiFetch";
-import useLogout from "../../../hooks/useLogout";
-import BackButton from "../../BackButton";
+import useApiFetch from "../../hooks/useApiFetch";
+import useLogout from "../../hooks/auth/useLogout";
+import BackButton from "../BackButton";
 
 function UserSettings() {
   const apiFetch = useApiFetch();

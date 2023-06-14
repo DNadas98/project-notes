@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import useApiFetch from "../../../hooks/useApiFetch";
-import BackButton from "../../BackButton";
+import useApiFetch from "../../hooks/useApiFetch";
+import BackButton from "../BackButton";
 
 function UserNotesList() {
   const apiFetch = useApiFetch();
@@ -39,7 +39,11 @@ function UserNotesList() {
               return (
                 <li key={note._id}>
                   <h2>{note.title}</h2>
-                  <p>{note.completed ? "Completed" : "Not completed yet"}</p>
+                  <div className="row">
+                    <button>Edit</button>
+                    <button>Delete</button>
+                  </div>
+                  <h3>{note.completed ? "Completed" : "Not completed yet"}</h3>
                   <p>{note.text}</p>
                 </li>
               );
