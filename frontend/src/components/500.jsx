@@ -20,12 +20,12 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <section className="error_500">
-          <h1>500 - Internal Server Error</h1>
+        <div className="Error">
+          <h1>Something went wrong...</h1>
           <a href="/">
             <button>Home</button>
           </a>
-        </section>
+        </div>
       );
     }
     return this.props.children;

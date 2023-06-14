@@ -1,5 +1,5 @@
 const express = require("express");
-const { getUserData, createUser, updateUser, deleteUser } = require("../../controller/usersController");
+const { getUserData, createUser, updateUser, deleteUser } = require("../../controller/userController");
 const verifyJWT = require("../../middleware/auth/verifyJWT");
 const verifyUser = require("../../middleware/auth/verifyUser");
 

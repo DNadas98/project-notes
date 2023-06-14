@@ -1,12 +1,12 @@
 require("dotenv").config({ path: "backend/config/config.env" });
 const express = require("express");
 const mongoose = require("mongoose");
-const connectToDatabase = require("./config/dbConnection");
+const connectToDatabase = require("./middleware/dbConnection");
 const helmet = require("helmet");
 const rateLimiter = require("./middleware/rateLimiter");
 const banned = require("./middleware/banned");
 const cors = require("cors");
-const corsOptions = require("./config/corsOptions");
+const corsOptions = require("./middleware/corsOptions");
 const cookieParser = require("cookie-parser");
 const { logRequest, logServed, logError } = require("./middleware/logger");
 const authRouter = require("./routes/api/auth.js");
@@ -33,10 +33,10 @@ server.use(cookieParser());
 server.use(logRequest);
 
 //Routing
-server.use("/auth", authRouter);
-server.use("/users", userRouter);
-server.use("/notes", notesRouter);
-server.use("/admin", adminRouter);
+server.use("/api/auth", authRouter);
+server.use("/api/user", userRouter);
+server.use("/api/notes", notesRouter);
+server.use("/api/admin", adminRouter);
 
 //404 - Not Found
 server.use((req, res, next) => {

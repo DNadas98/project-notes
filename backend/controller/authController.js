@@ -19,26 +19,27 @@ async function login(req, res, next) {
     if (!pwdMatching) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    //create accesstoken, refreshtoken
+    //create accessToken, refreshToken
     const accessToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     const refreshToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     //create cookie
     res.cookie("jwt", refreshToken, {
-      httpOnly: true, //only accessible by webserver
-      secure: true, //https
-      sameSite: "None", //cross-site cookie
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    //client app never handles refresh token, only the server
-    return res.status(200).json({ accessToken });
+    return res
+      .status(200)
+      .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
   } catch (err) {
     logError(err, req);
     return next(err);
@@ -51,7 +52,7 @@ async function refresh(req, res) {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
     const refreshToken = cookies.jwt;
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
     if (!decoded?.UserInfo?.userid || !decoded?.UserInfo?.roles) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -65,11 +66,13 @@ async function refresh(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const accessToken = jwt.sign(
-      { "UserInfo": { "userid": userid, "roles": roles } },
+      { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}` }
+      { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
-    return res.status(200).json(accessToken);
+    return res
+      .status(200)
+      .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
   } catch (err) {
     logError(err, req);
     return res.status(401).json({ message: "Unauthorized" });

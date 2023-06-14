@@ -1,35 +1,48 @@
 import { Route, Routes } from "react-router-dom";
 import "./style/App.css";
+import RequireAuth from "./components/auth/RequireAuth";
 import Layout from "./components/Layout";
-import Public from "./components/Public";
-import ApiLayout from "./components/ApiLayout";
+import Home from "./components/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Welcome from "./components/auth/Welcome";
-import NotesList from "./components/notes/NotesList";
-import UsersList from "./components/users/UsersList";
+import UserLayout from "./components/user/UserLayout";
+import UserHome from "./components/user/UserHome";
+import UserNotesList from "./components/user/notes/UserNotesList";
+import UserDetails from "./components/user/users/UserSettings";
+import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
+import UsersList from "./components/admin/users/UsersList";
+import AdminHome from "./components/admin/AdminHome";
 
 function App() {
   return (
     <ErrorBoundary>
       <Routes>
+        {/*public*/}
         <Route path="/" element={<Layout />}>
-          {/*public*/}
-          <Route index element={<Public />} />
+          <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          {/*restricted*/}
-          <Route path="api" element={<ApiLayout />}>
-            <Route index element={<Welcome />} />
-            <Route path="notes" element={<NotesList />} />
+        </Route>
+        {/*user*/}
+        <Route element={<RequireAuth allowedRoles={["User"]} />}>
+          <Route path="user" element={<UserLayout />}>
+            <Route index element={<UserHome />} />
+            <Route path="notes" element={<UserNotesList />} />
+            <Route path="settings" element={<UserDetails />} />
+          </Route>
+        </Route>
+        {/*admin*/}
+        <Route element={<RequireAuth allowedRoles={["Admin"]} />}>
+          <Route path="admin" element={<UserLayout />}>
+            <Route index element={<AdminHome />} />
             <Route path="users" element={<UsersList />} />
           </Route>
-          {/*error*/}
-          <Route path="404" element={<NotFound />} />
-          <Route path="*" element={<NotFound />} />
         </Route>
+        {/*Error*/}
+        <Route path="err" element={<Error />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </ErrorBoundary>
   );

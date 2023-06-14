@@ -11,7 +11,7 @@ async function getAllUsers(req, res, next) {
     if (!users || !Array.isArray(users) || !users.length >= 1) {
       return res.status(404).json({ message: "No users found" });
     }
-    return res.status(200).json(users);
+    return res.status(200).json({ "data": users });
   } catch (err) {
     logError(err, req);
     return next(err);
@@ -40,7 +40,7 @@ async function updateUserById(req, res, next) {
       return res.status(404).json({ message: `User not found` });
     }
     if (user.roles.includes("Admin")) {
-      return res.status(401).json({ message: "Admin accounts can not be modified here" });
+      return res.status(400).json({ message: "Admin accounts can not be modified here" });
     }
     if (roles) {
       user.roles = roles;
@@ -74,7 +74,7 @@ async function deleteUserById(req, res, next) {
       return res.status(404).json({ message: "User not found" });
     }
     if (user.roles.includes("Admin")) {
-      return res.status(401).json({ message: "Admin accounts can not be deleted here" });
+      return res.status(400).json({ message: "Admin accounts can not be deleted here" });
     }
     const note = await Note.findOne({ userid }).lean().exec();
     if (note) {

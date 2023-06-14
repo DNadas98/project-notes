@@ -9,7 +9,7 @@ async function getNotes(req, res, next) {
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    return res.status(200).json(notes);
+    return res.status(200).json({ "data": notes });
   } catch (err) {
     logError(err, req);
     return next(err);
