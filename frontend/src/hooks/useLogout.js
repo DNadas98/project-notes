@@ -19,7 +19,6 @@ function useLogout() {
           credentials: "include"
         });
       } catch (err) {
-        console.error(err);
       } finally {
         let path = "/login";
         if (willfulLogout) {

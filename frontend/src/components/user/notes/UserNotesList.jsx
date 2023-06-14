@@ -18,7 +18,7 @@ function UserNotesList() {
           setResMessage(responseObject.message);
         }
       } catch (err) {
-        console.error(err);
+        setResMessage("Failed to load notes");
       } finally {
         setLoading(false);
       }
