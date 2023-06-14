@@ -16,7 +16,6 @@ function useRefresh() {
         credentials: "include"
       });
       const responseObject = await httpResponse.json();
-      console.log("refresh\n", responseObject, "\n");
       if (
         httpResponse?.status === 200 &&
         responseObject?.username &&
@@ -34,7 +33,6 @@ function useRefresh() {
         return null;
       }
     } catch (err) {
-      console.error(err);
       await logout();
       return null;
     }

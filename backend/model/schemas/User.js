@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true
-  }
+  },
+  refreshTokens: [{ type: String }]
 });
 
 module.exports = mongoose.model("User", userSchema);

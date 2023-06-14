@@ -18,7 +18,7 @@ function UsersList() {
           setResMessage(responseObject.message);
         }
       } catch (err) {
-        console.error(err);
+        setResMessage("Failed to load users list");
       } finally {
         setLoading(false);
       }
