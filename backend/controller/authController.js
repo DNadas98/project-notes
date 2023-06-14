@@ -41,14 +41,14 @@ async function login(req, res, next) {
       { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     //create cookie
+    foundUser.refreshTokens.push(newRefreshToken);
+    const updatedUser = await foundUser.save();
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    foundUser.refreshTokens.push(newRefreshToken);
-    const updatedUser = await foundUser.save();
     if (updatedUser) {
       return res
         .status(200)
