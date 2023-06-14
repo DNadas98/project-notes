@@ -7,8 +7,15 @@ async function verifyUser(req, res, next) {
     if (!req?.userid || !isValidObjectId(req.userid) || !req?.roles || !Array.isArray(req.roles)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const user = await User.findOne({ _id: req.userid, roles: req.roles }).lean();
+    const user = await User.findOne({ _id: req.userid, roles: req.roles }).exec();
     if (!user || !user.active) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    /* invalid reuse attempt */
+    if (!user.refreshTokens.includes(req.refreshToken)) {
+      user.refreshTokens = [];
+      await user.save();
+      res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
       return res.status(401).json({ message: "Unauthorized" });
     }
     return next();
