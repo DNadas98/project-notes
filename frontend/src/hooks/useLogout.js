@@ -6,24 +6,31 @@ function useLogout() {
   const { setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const logout = useCallback(async () => {
-    try {
-      const apiUrl = "http://127.0.0.1:3501/api";
-      const url = `${apiUrl}/auth/logout`;
-      await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include"
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      navigate("/login", { state: { from: location }, replace: true });
-      setAuth({});
-    }
-  }, [setAuth, location, navigate]);
+  const logout = useCallback(
+    async (willfulLogout = false) => {
+      try {
+        const apiUrl = "http://127.0.0.1:3501/api";
+        const url = `${apiUrl}/auth/logout`;
+        await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        let path = "/login";
+        if (willfulLogout) {
+          path = "/";
+        }
+        navigate(path, { state: { from: location }, replace: true });
+        setAuth({});
+      }
+    },
+    [setAuth, location, navigate]
+  );
 
   return logout;
 }

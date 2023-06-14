@@ -25,7 +25,7 @@ function UserHome() {
       <Link to="/">
         <button
           onClick={async () => {
-            await logout();
+            await logout(true);
           }}
         >
           Logout
