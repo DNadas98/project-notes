@@ -16,6 +16,22 @@ async function getNotes(req, res, next) {
   }
 }
 
+//GET /notes
+async function getNoteById(req, res, next) {
+  try {
+    const userid = req.userid;
+    const _id = decodeURI(req.params.id);
+    const note = await Note.findOne({ _id, userid }).lean();
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    return res.status(200).json({ "data": note });
+  } catch (err) {
+    logError(err, req);
+    return next(err);
+  }
+}
+
 //POST /notes
 async function createNote(req, res, next) {
   try {
@@ -44,20 +60,20 @@ async function createNote(req, res, next) {
 async function updateNote(req, res, next) {
   try {
     const userid = req.userid;
-    const { id, title, text, completed } = req.body;
-    if (!id || !title || !text || typeof completed != "boolean") {
+    const { _id, title, text, completed } = req.body;
+    if (!_id || !title || typeof completed != "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
     }
-    const note = await Note.findOne({ id, userid }).exec();
+    const note = await Note.findOne({ _id, userid }).exec();
     if (!note) {
       return res.status(404).json({ message: `Note with title ${title} not found` });
     }
     const duplicate = await Note.findOne({ userid, title }).lean();
-    if (duplicate && duplicate.id.toString() !== id) {
+    if (duplicate && duplicate._id.toString() !== _id) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     note.title = title;
-    note.text = text;
+    note.text = text ? text : "";
     note.completed = completed;
     const updatedNote = await note.save();
     if (updateNote) {
@@ -74,19 +90,17 @@ async function updateNote(req, res, next) {
 async function deleteNote(req, res, next) {
   try {
     const userid = req.userid;
-    const { id } = req.body;
-    if (!id) {
+    const { _id } = req.body;
+    if (!_id) {
       return res.status(400).json({ message: "Note ID required" });
     }
-    const note = await Note.findOne({ _id: id, userid }).exec();
+    const note = await Note.findOne({ _id, userid }).exec();
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    const result = await note.deleteOne();
-    if (result.deletedCount > 0) {
-      return res
-        .status(200)
-        .json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+    const deleted = await note.deleteOne();
+    if (deleted) {
+      return res.status(200).json({ message: `Note with title ${note.title} deleted successfully` });
     }
     return res.status(400).json({ message: "Failed to delete note" });
   } catch (err) {
@@ -95,4 +109,4 @@ async function deleteNote(req, res, next) {
   }
 }
 
-module.exports = { getNotes, createNote, updateNote, deleteNote };
+module.exports = { getNotes, getNoteById, createNote, updateNote, deleteNote };

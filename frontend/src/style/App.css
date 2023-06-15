@@ -18,6 +18,7 @@
 
 body {
   --light: aliceblue;
+  --lightFaded: rgba(240, 248, 255, 0.8);
   --mid: steelblue;
   --dark: rgb(10, 20, 30);
   --darkest: black;
@@ -26,27 +27,6 @@ body {
 
   background-color: var(--dark);
   color: var(--light);
-}
-
-input,
-button {
-  padding: 10px 20px;
-  text-align: flex-end;
-  border: 2px solid var(--light);
-  border-radius: 3px;
-  min-width: 120px;
-  transition: var(--transitionspeed);
-}
-input:hover,
-input:focus,
-button:hover,
-button:focus-visible {
-  background-color: var(--light);
-  color: var(--dark);
-}
-input:active,
-button:active {
-  opacity: 0.8;
 }
 
 .Layout {
@@ -107,7 +87,8 @@ main {
 
 .Unauthorized,
 .NotFound,
-.Error {
+.Error,
+.Loading {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -130,9 +111,91 @@ main {
 .row {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  align-items: last baseline;
+  flex-wrap: nowrap;
+  align-items: center;
   justify-content: center;
   gap: 20px;
   padding: 20px;
+}
+
+input[type="text"],
+input[type="password"],
+button,
+textarea {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  height: 2.5rem;
+  border: 2px solid var(--light);
+  border-radius: 3px;
+  transition: var(--transitionspeed);
+}
+
+button {
+  width: 8rem;
+  justify-content: center;
+  text-align: center;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 10rem;
+  justify-content: left;
+  padding-left: 10px;
+}
+
+textarea {
+  width: 20rem;
+  padding: 10px;
+  justify-content: center;
+  text-align: justify;
+  color: var(--lightFaded);
+}
+
+input[type="text"]:hover,
+input[type="password"]:hover,
+input[type="text"]:focus-visible,
+input[type="password"]:focus-visible,
+button:hover,
+button:focus-visible {
+  background-color: var(--light);
+  color: var(--dark);
+}
+
+textarea:hover,
+textarea:focus-visible {
+  color: var(--light);
+}
+
+input[type="text"]:active,
+input[type="password"]:active,
+button:active {
+  opacity: 0.8;
+}
+
+.smallButton {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+input[type="checkbox"] {
+  appearance: checkbox;
+  -moz-appearance: checkbox;
+  -webkit-appearance: checkbox;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: var(--transitionspeed);
+}
+
+input[type="checkbox"]:active {
+  opacity: 0.8;
+}
+
+.noteText,
+.editNote textarea {
+  padding: 10px;
+  width: 25rem;
+  height: 100%;
+  text-align: justify;
+  white-space: normal;
 }

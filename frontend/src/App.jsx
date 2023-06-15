@@ -14,6 +14,7 @@ import AdminHome from "./components/admin/AdminHome";
 import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
+import EditNote from "./components/notes/EditNote";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="user" element={<UserLayout />}>
             <Route index element={<UserHome />} />
             <Route path="notes" element={<UserNotesList />} />
+            <Route path="notes/edit" element={<EditNote />} />
             <Route path="settings" element={<UserDetails />} />
           </Route>
         </Route>

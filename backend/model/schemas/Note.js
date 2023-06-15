@@ -12,8 +12,7 @@ const noteSchema = new mongoose.Schema(
       required: true
     },
     text: {
-      type: String,
-      required: true
+      type: String
     },
     completed: {
       type: Boolean,
