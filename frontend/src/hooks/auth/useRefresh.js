@@ -33,7 +33,6 @@ function useRefresh() {
         return null;
       }
     } catch (err) {
-      console.error(err);
       await logout();
       return null;
     }

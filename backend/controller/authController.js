@@ -8,6 +8,8 @@ const { isValidObjectId } = require("mongoose");
 async function login(req, res, next) {
   try {
     const { username, password } = req.body;
+    const oldRefreshToken = req?.cookies?.jwt;
+
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required" });
     }
@@ -19,27 +21,40 @@ async function login(req, res, next) {
     if (!pwdMatching) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    if (oldRefreshToken && foundUser.refreshTokens.includes(oldRefreshToken)) {
+      foundUser.refreshTokens.splice(foundUser.refreshTokens.indexOf(oldRefreshToken), 1);
+    } /* invalid reuse attempt */ else if (oldRefreshToken) {
+      foundUser.refreshTokens = [];
+      await foundUser.save();
+      res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     //create accessToken, refreshToken
     const accessToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
-    const refreshToken = jwt.sign(
+    const newRefreshToken = jwt.sign(
       { "UserInfo": { "userid": foundUser._id, "roles": foundUser.roles } },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
     //create cookie
-    res.cookie("jwt", refreshToken, {
+    foundUser.refreshTokens.push(newRefreshToken);
+    const updatedUser = await foundUser.save();
+    res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "None",
       maxAge: process.env.REFRESH_TOKEN_EXPIRESIN
     });
-    return res
-      .status(200)
-      .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
+    if (updatedUser) {
+      return res
+        .status(200)
+        .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
+    }
+    return res.status(400).json({ message: "Failed to log in" });
   } catch (err) {
     logError(err, req);
     return next(err);
@@ -53,16 +68,16 @@ async function refresh(req, res) {
     if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
     const refreshToken = cookies.jwt;
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
-    if (!decoded?.UserInfo?.userid || !decoded?.UserInfo?.roles) {
+    const userid = decoded?.UserInfo?.userid;
+    const roles = decoded?.UserInfo?.roles;
+    if (!userid || !roles) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const userid = decoded.UserInfo.userid;
-    const roles = decoded.UserInfo.roles;
     if (!isValidObjectId(userid) || !Array.isArray(roles)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const foundUser = await User.findOne({ _id: userid, roles }).lean();
-    if (!foundUser || !foundUser.active) {
+    if (!foundUser || !foundUser.active || !foundUser.refreshTokens.includes(refreshToken)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const accessToken = jwt.sign(
@@ -80,11 +95,17 @@ async function refresh(req, res) {
 }
 
 //GET /auth/logout
-function logout(req, res, next) {
+async function logout(req, res, next) {
   try {
     const cookies = req.cookies;
-    if (!cookies?.jwt) {
+    const refreshToken = cookies?.jwt;
+    if (!refreshToken) {
       return res.status(204).json({ message: "No content" });
+    }
+    const foundUser = await User.findOne({ refreshTokens: { $in: [refreshToken] } }).exec();
+    if (foundUser) {
+      foundUser.refreshTokens.splice(foundUser.refreshTokens.indexOf(refreshToken), 1);
+      await foundUser.save();
     }
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.status(200).json({ message: "Logout successful" });

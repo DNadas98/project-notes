@@ -4,18 +4,23 @@ const { logError } = require("../logger");
 function verifyJWT(req, res, next) {
   try {
     const authHeader = req.headers.authorization || req.headers.Authorization;
-    if (!authHeader?.startsWith("Bearer")) {
+    const accessToken = authHeader?.split(" ")[1];
+    const refreshToken = req?.cookies?.jwt;
+    if (!authHeader?.startsWith("Bearer") || !accessToken || !refreshToken) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const accessToken = authHeader.split(" ")[1];
-    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, {
+    const accessDecoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, {
       algorithms: ["HS256"]
     });
-    if (!decoded) {
+    const refreshDecoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, {
+      algorithms: ["HS256"]
+    });
+    if (!accessDecoded || !refreshDecoded || accessDecoded?.UserInfo?.userid !== refreshDecoded?.UserInfo?.userid) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    req.userid = decoded.UserInfo.userid;
-    req.roles = decoded.UserInfo.roles;
+    req.userid = accessDecoded.UserInfo.userid;
+    req.roles = accessDecoded.UserInfo.roles;
+    req.refreshToken = refreshToken;
     return next();
   } catch (err) {
     logError(err);
