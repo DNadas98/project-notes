@@ -15,6 +15,7 @@ import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
 import EditNote from "./components/notes/EditNote";
+import CreateNote from "./components/notes/CreateNote";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="user" element={<UserLayout />}>
             <Route index element={<UserHome />} />
             <Route path="notes" element={<UserNotesList />} />
+            <Route path="notes/create" element={<CreateNote />} />
             <Route path="notes/edit" element={<EditNote />} />
             <Route path="settings" element={<UserDetails />} />
           </Route>

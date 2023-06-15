@@ -144,6 +144,12 @@ input[type="password"] {
   padding-left: 10px;
 }
 
+input::placeholder {
+  color: var(--light);
+  opacity: 0.8;
+  transition: var(--transitionspeed);
+}
+
 textarea {
   width: 20rem;
   padding: 10px;
@@ -159,6 +165,11 @@ input[type="password"]:focus-visible,
 button:hover,
 button:focus-visible {
   background-color: var(--light);
+  color: var(--dark);
+}
+
+input:focus-visible::placeholder,
+input:hover::placeholder {
   color: var(--dark);
 }
 
@@ -192,7 +203,7 @@ input[type="checkbox"]:active {
 }
 
 .noteText,
-.editNote textarea {
+.NoteForm textarea {
   padding: 10px;
   width: 25rem;
   height: 100%;

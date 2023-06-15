@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useApiFetch from "../../hooks/useApiFetch";
 import BackButton from "../BackButton";
 import UserNoteItem from "./UserNoteItem";
+import { Link } from "react-router-dom";
 
 function UserNotesList() {
   const apiFetch = useApiFetch();
@@ -31,6 +32,9 @@ function UserNotesList() {
 
   return (
     <div className="UserNotesList column">
+      <Link to="create">
+        <button>Create new note</button>
+      </Link>
       <h1>User notes</h1>
       {loading ? (
         <h2>Loading...</h2>
