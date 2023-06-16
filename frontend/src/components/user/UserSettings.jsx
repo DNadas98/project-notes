@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import useApiFetch from "../../hooks/useApiFetch";
 import useLogout from "../../hooks/auth/useLogout";
-import BackButton from "../BackButton";
+import ConfirmBackButton from "../ConfirmBackButton";
+import Confirm from "../Confirm";
 
 function UserSettings() {
   const apiFetch = useApiFetch();
@@ -10,6 +11,9 @@ function UserSettings() {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const confirmText = "Are you sure you want to update your user settings?\nYou will be required to log in again.";
+
   async function handleSubmit(event) {
     try {
       event.preventDefault();
@@ -26,29 +30,49 @@ function UserSettings() {
         validInput = false;
       }
       if (validInput) {
-        let requestBody = {};
-        if (username) {
-          requestBody.newUsername = username;
-        }
-        if (password) {
-          requestBody.newPassword = password;
-        }
-        const { httpResponse, responseObject } = await apiFetch("PATCH", "user", requestBody);
-        if (httpResponse.status === 200 && responseObject?.message) {
-          await logout();
-        }
-        if (responseObject?.message) {
-          setResultMessage(responseObject.message);
-        }
+        setShowConfirm(true);
       }
     } catch (err) {
       setResultMessage("Failed to update settings");
     }
   }
+
+  async function fetchUpdate() {
+    try {
+      const username = usernameRef.current.value;
+      const password = passwordRef.current.value;
+      let requestBody = {};
+      if (username) {
+        requestBody.newUsername = username;
+      }
+      if (password) {
+        requestBody.newPassword = password;
+      }
+      const { httpResponse, responseObject } = await apiFetch("PATCH", "user", requestBody);
+      if (httpResponse.status === 200 && responseObject?.message) {
+        await logout();
+      } else if (responseObject?.message) {
+        setResultMessage(responseObject.message);
+      } else {
+        setResultMessage("Failed to update settings");
+      }
+    } catch (err) {
+      setResultMessage("Failed to update settings");
+    } finally {
+      setShowConfirm(false);
+    }
+  }
+
   return (
     <div className="UserSettings column">
+      <Confirm
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        confirmText={confirmText}
+        onConfirm={fetchUpdate}
+      />
       <h1>User settings</h1>
-      {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your data to update</p>}
+      {resultMessage ? <h3 className="red">{resultMessage}</h3> : <h3>Please enter your data to update</h3>}
       <form
         className="column"
         onSubmit={(event) => {
@@ -61,9 +85,9 @@ function UserSettings() {
         <input type="password" id="password" ref={passwordRef} />
         <label htmlFor="confirm_password">Confirm password:</label>
         <input type="password" id="confirm_password" ref={confirmPasswordRef} />
-        <button>Send</button>
+        <button>Save</button>
       </form>
-      <BackButton />
+      <ConfirmBackButton />
     </div>
   );
 }

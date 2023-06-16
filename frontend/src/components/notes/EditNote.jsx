@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import BackButton from "../BackButton";
 import { useLocation } from "react-router-dom";
 import useApiFetch from "../../hooks/useApiFetch";
 import NoteForm from "./NoteForm";
+import ConfirmBackButton from "../ConfirmBackButton";
 
 function EditNote() {
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ function EditNote() {
       ) : (
         <h1>Note not found</h1>
       )}
-      <BackButton />
+      <ConfirmBackButton />
     </div>
   );
 }

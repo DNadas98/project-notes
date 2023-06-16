@@ -19,14 +19,19 @@
 body {
   --light: aliceblue;
   --lightFaded: rgba(240, 248, 255, 0.8);
+  --darkFaded: rgba(10, 10, 10, 0.9);
   --mid: steelblue;
-  --dark: rgb(10, 20, 30);
+  --dark: rgb(10, 10, 10);
   --darkest: black;
-  --invalidInput: rgba(178, 34, 34, 0.5);
+  --red: rgb(178, 34, 34);
+  --green: rgb(34, 178, 53);
+  --redInput: rgba(178, 34, 34, 0.5);
+  --greenInput: rgba(34, 178, 53, 0.5);
   --transitionspeed: 0.2s;
 
   background-color: var(--dark);
   color: var(--light);
+  font-family: sans-serif;
 }
 
 .Layout {
@@ -38,6 +43,7 @@ body {
 
 header,
 footer {
+  position: fixed;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -53,12 +59,10 @@ footer {
 }
 
 header {
-  position: fixed;
   top: 0;
 }
 
 footer {
-  position: fixed;
   bottom: 0;
 }
 
@@ -164,6 +168,7 @@ input[type="text"]:focus-visible,
 input[type="password"]:focus-visible,
 button:hover,
 button:focus-visible {
+  cursor: pointer;
   background-color: var(--light);
   color: var(--dark);
 }
@@ -202,11 +207,92 @@ input[type="checkbox"]:active {
   opacity: 0.8;
 }
 
+.green {
+  color: var(--green);
+}
+
+.red {
+  color: var(--red);
+}
+
+.through {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.5px;
+}
+
+.confirm {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 60px);
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  background-color: var(--darkFaded);
+}
+
+.confirmBox {
+  margin: 30px;
+  border: 2px solid var(--light);
+  border-radius: 3px;
+  background-color: var(--dark);
+  color: var(--light);
+  width: fit-content;
+  height: fit-content;
+  white-space: pre-wrap;
+}
+
+.confirmBox .row {
+  padding: 0;
+}
+
+.UserNotesList ul {
+  width: 30rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.UserNoteItem .row {
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.UserNoteItem {
+  padding: 0;
+  align-items: stretch;
+  width: 100%;
+}
+
+.noteTitle {
+  display: flex;
+  flex: 1;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  justify-content: left;
+}
+
+.noteButtons {
+  flex-shrink: 1;
+}
+
+.noteDetails {
+  border: 2px solid var(--light);
+  border-radius: 3px;
+  padding: 10px;
+  gap: 10px;
+  width: 30rem;
+}
+
 .noteText,
 .NoteForm textarea {
-  padding: 10px;
-  width: 25rem;
-  height: 100%;
   text-align: justify;
   white-space: normal;
+}
+
+.NoteForm textarea {
+  width: 30rem;
+  padding: 10px;
+  height: 100%;
 }

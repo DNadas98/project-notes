@@ -6,11 +6,11 @@ import Footer from "./Footer";
 function Layout() {
   return (
     <div className="Layout">
-      <Header pageTitle="Project Auth" />
+      <Header pageTitle="My Project" />
       <main>
         <Outlet />
       </main>
-      <Footer pageTitle="Project Auth" name="Daniel Nadas" />
+      <Footer pageTitle="My Project" name="Daniel Nadas" />
     </div>
   );
 }

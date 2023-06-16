@@ -36,15 +36,18 @@ async function getNoteById(req, res, next) {
 async function createNote(req, res, next) {
   try {
     const userid = req.userid;
-    const { title, text } = req.body;
-    if (!title || !text) {
-      return res.status(400).json({ message: "All fields are required" });
+    const { title, text, completed } = req.body;
+    if (typeof completed !== "boolean") {
+      return res.status(400).json({ message: "Invalid note data" });
+    }
+    if (!title) {
+      return res.status(400).json({ message: "Title is required" });
     }
     const duplicate = await Note.findOne({ userid, title }).lean();
     if (duplicate) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
-    const noteObject = { "userid": userid, "title": title, "text": text };
+    const noteObject = { "userid": userid, "title": title, "text": text ? text : "", "completed": completed };
     const note = await Note.create(noteObject);
     if (note) {
       return res.status(201).json({ message: `New note ${title} created successfully` });
@@ -61,8 +64,11 @@ async function updateNote(req, res, next) {
   try {
     const userid = req.userid;
     const { _id, title, text, completed } = req.body;
-    if (!_id || !title || typeof completed != "boolean") {
-      return res.status(400).json({ message: "Invalid update request" });
+    if (!_id || typeof completed != "boolean") {
+      return res.status(400).json({ message: "Invalid note data" });
+    }
+    if (!title) {
+      return res.status(400).json({ message: "Title is required" });
     }
     const note = await Note.findOne({ _id, userid }).exec();
     if (!note) {

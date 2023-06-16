@@ -9,12 +9,14 @@ function UserNotesList() {
   const [loading, setLoading] = useState(true);
   const [userNotes, setUserNotes] = useState(null);
   const [resMessage, setResMessage] = useState(null);
+  const [filteredNotes, setFilteredNotes] = useState(null);
 
   async function getUserNotes() {
     try {
       const { responseObject } = await apiFetch("GET", "notes");
       if (responseObject?.data) {
         setUserNotes(responseObject.data);
+        setFilteredNotes(responseObject.data);
       } else if (responseObject?.message) {
         setUserNotes(null);
         setResMessage(responseObject.message);
@@ -30,21 +32,32 @@ function UserNotesList() {
     getUserNotes();
   }, [apiFetch, setLoading]);
 
+  function handleSearch(searchValue) {
+    setFilteredNotes(userNotes.filter((note) => note.title.toLowerCase().includes(searchValue.toLowerCase())));
+  }
+
   return (
     <div className="UserNotesList column">
-      <Link to="create">
-        <button>Create new note</button>
-      </Link>
       <h1>User notes</h1>
+      <div className="row">
+        <input
+          type="text"
+          placeholder="Search notes"
+          onInput={(event) => {
+            handleSearch(event.target.value);
+          }}
+        />
+        <Link to="create">
+          <button>Create new note</button>
+        </Link>
+      </div>
       {loading ? (
         <h2>Loading...</h2>
       ) : userNotes ? (
         <ul className="column">
-          {userNotes
-            .sort((a, b) => a.title.localeCompare(b.title))
-            .map((note) => {
-              return <UserNoteItem key={note._id} note={note} getUserNotes={getUserNotes} />;
-            })}
+          {filteredNotes.map((note) => {
+            return <UserNoteItem key={note._id} note={note} getUserNotes={getUserNotes} />;
+          })}
         </ul>
       ) : resMessage ? (
         <h2>{resMessage}</h2>

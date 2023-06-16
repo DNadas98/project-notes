@@ -13,7 +13,7 @@ function UserLayout() {
       <main>
         <Outlet />
       </main>
-      <Footer pageTitle="Project Auth" name="Daniel Nadas" />
+      <Footer pageTitle="My Project" name="Daniel Nadas" />
     </div>
   );
 }
