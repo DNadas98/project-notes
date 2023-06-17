@@ -43,7 +43,9 @@ function useApiFetch() {
         }
         const responseObject = await httpResponse.json();
         return { "httpResponse": httpResponse, "responseObject": responseObject };
-      } catch (err) {}
+      } catch (err) {
+        return { "httpResponse": null, "responseObject": null };
+      }
     },
     [auth.accessToken, logout]
   );

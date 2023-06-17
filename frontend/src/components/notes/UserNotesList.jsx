@@ -17,12 +17,13 @@ function UserNotesList() {
       if (responseObject?.data) {
         setUserNotes(responseObject.data);
         setFilteredNotes(responseObject.data);
-      } else if (responseObject?.message) {
+      } else {
         setUserNotes(null);
-        setResMessage(responseObject.message);
+        setFilteredNotes(null);
+        responseObject?.message ? setResMessage(responseObject.message) : setResMessage("Failed to load notes");
       }
     } catch (err) {
-      console.error(err);
+      setResMessage("Failed to load notes");
     } finally {
       setLoading(false);
     }

@@ -13,7 +13,7 @@ function AdminHome() {
       <h2>Admin Panel</h2>
       <p>{todaysDate}</p>
       <Link to="/admin/users">
-        <button>List users</button>
+        <button>Users</button>
       </Link>
       <button
         onClick={() => {

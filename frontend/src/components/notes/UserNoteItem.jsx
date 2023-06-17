@@ -16,11 +16,8 @@ function UserNoteItem({ note, getUserNotes }) {
       const { httpResponse, responseObject } = await apiFetch("DELETE", "notes", { "_id": note._id });
       if (httpResponse?.status === 200 && responseObject?.message) {
         await getUserNotes();
-        return null;
       }
-    } catch (err) {
-      return null;
-    }
+    } catch (err) {}
   }
   return (
     <li className="UserNoteItem column">

@@ -5,7 +5,7 @@ const { logError } = require("../middleware/logger");
 const { isValidObjectId } = require("mongoose");
 
 //GET /auth/login
-async function login(req, res, next) {
+async function login(req, res) {
   try {
     const { username, password } = req.body;
     const oldRefreshToken = req?.cookies?.jwt;
@@ -54,10 +54,10 @@ async function login(req, res, next) {
         .status(200)
         .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
     }
-    return res.status(400).json({ message: "Failed to log in" });
+    return res.status(401).json({ message: "Unauthorized" });
   } catch (err) {
     logError(err, req);
-    return next(err);
+    return res.status(401).json({ message: "Unauthorized" });
   }
 }
 

@@ -18,11 +18,29 @@ async function getAllUsers(req, res, next) {
   }
 }
 
+//GET /users/:id
+async function getUserById(req, res, next) {
+  try {
+    const _id = decodeURI(req.params.id);
+    if (!isValidObjectId(_id)) {
+      return res.status(400).json({ message: "Invalid user data" });
+    }
+    const user = await User.findById(_id).select("-password  -__v").lean();
+    if (!user) {
+      return res.status(404).json({ message: "No user found" });
+    }
+    return res.status(200).json({ "data": user });
+  } catch (err) {
+    logError(err, req);
+    return next(err);
+  }
+}
+
 //PATCH /users
 async function updateUserById(req, res, next) {
   try {
     const { userid, roles, active } = req.body;
-    if (!roles && !active) {
+    if (!roles && typeof active !== "boolean") {
       return res.status(204).json({ message: "Nothing to update" });
     }
     if (
@@ -30,8 +48,7 @@ async function updateUserById(req, res, next) {
       !isValidObjectId(userid) ||
       (roles && !Array.isArray(roles)) ||
       (roles && !roles.includes("User")) ||
-      (roles && roles.some((role) => !availableRoles.includes(role))) ||
-      (active && typeof active !== "boolean")
+      (roles && roles.some((role) => !availableRoles.includes(role)))
     ) {
       return res.status(400).json({ message: "Invalid user details" });
     }
@@ -62,7 +79,7 @@ async function updateUserById(req, res, next) {
 //DELETE /users
 async function deleteUserById(req, res, next) {
   try {
-    const { id: userid } = req.body;
+    const { userid } = req.body;
     if (!userid) {
       return res.status(400).json({ message: "User ID required" });
     }
@@ -91,4 +108,4 @@ async function deleteUserById(req, res, next) {
   }
 }
 
-module.exports = { getAllUsers, updateUserById, deleteUserById };
+module.exports = { getAllUsers, getUserById, updateUserById, deleteUserById };

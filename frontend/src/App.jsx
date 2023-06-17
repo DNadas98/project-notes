@@ -9,13 +9,14 @@ import UserLayout from "./components/user/UserLayout";
 import UserHome from "./components/user/UserHome";
 import UserDetails from "./components/user/UserSettings";
 import UserNotesList from "./components/notes/UserNotesList";
-import UsersList from "./components/admin/users/UsersList";
+import EditNote from "./components/notes/EditNote";
+import CreateNote from "./components/notes/CreateNote";
 import AdminHome from "./components/admin/AdminHome";
+import UsersList from "./components/admin/users/UsersList";
+import EditUser from "./components/admin/users/EditUser";
 import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
-import EditNote from "./components/notes/EditNote";
-import CreateNote from "./components/notes/CreateNote";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="admin" element={<UserLayout />}>
             <Route index element={<AdminHome />} />
             <Route path="users" element={<UsersList />} />
+            <Route path="users/edit" element={<EditUser />} />
           </Route>
         </Route>
         {/*Error*/}
