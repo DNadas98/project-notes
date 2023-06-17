@@ -7,7 +7,7 @@ const availableRoles = require("../config/availableRoles");
 //GET /users
 async function getAllUsers(req, res, next) {
   try {
-    const users = await User.find().select("-password  -__v").lean();
+    const users = await User.find().select("-password  -refreshTokens -__v").lean();
     if (!users || !Array.isArray(users) || !users.length >= 1) {
       return res.status(404).json({ message: "No users found" });
     }
@@ -25,7 +25,7 @@ async function getUserById(req, res, next) {
     if (!isValidObjectId(_id)) {
       return res.status(400).json({ message: "Invalid user data" });
     }
-    const user = await User.findById(_id).select("-password  -__v").lean();
+    const user = await User.findById(_id).select("-password -refreshTokens -__v").lean();
     if (!user) {
       return res.status(404).json({ message: "No user found" });
     }
