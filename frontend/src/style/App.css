@@ -43,6 +43,7 @@ body {
 
 header,
 footer {
+  z-index: 9999;
   position: fixed;
   display: flex;
   flex-direction: row;
@@ -221,7 +222,7 @@ input[type="checkbox"]:active {
 }
 
 .confirm {
-  z-index: 9999;
+  z-index: 999;
   position: fixed;
   top: 0;
   left: 0;
@@ -248,7 +249,8 @@ input[type="checkbox"]:active {
   margin: 0 20px 20px 20px;
 }
 
-.UserNotesList ul {
+.UserNotesList ul,
+.AdminNotesList ul {
   width: 30rem;
 }
 
@@ -278,7 +280,7 @@ input[type="checkbox"]:active {
 .noteDetails {
   border: 2px solid var(--light);
   border-radius: 3px;
-  padding: 0;
+  padding: 10px 0;
   gap: 10px;
   width: 100%;
 }
@@ -300,16 +302,35 @@ input[type="checkbox"]:active {
   height: 100%;
 }
 
-.UserItem * {
-  padding: 0;
-}
-
 table {
+  width: 100%;
+  text-align: left;
   padding: 10px;
 }
 
-table,
-tr,
 td {
-  border: 0.1px dashed red;
+  padding: 10px;
+}
+
+.username {
+  text-align: center;
+}
+
+.username h2 {
+  width: fit-content;
+  display: inline;
+}
+
+td table {
+  min-width: 0;
+  width: fit-content;
+  padding: 0;
+}
+
+td table td {
+  padding: 5px;
+}
+
+.hiddenCell {
+  padding: 0;
 }

@@ -48,14 +48,16 @@ function UsersList() {
         <h2>Loading...</h2>
       ) : users ? (
         <table>
-          {filteredUsers.map((user) => {
-            return <UserItem key={user._id} user={user} getUsers={getUsers} />;
-          })}
+          <tbody>
+            {filteredUsers.map((user) => {
+              return <UserItem key={user._id} user={user} getUsers={getUsers} />;
+            })}
+          </tbody>
         </table>
       ) : resMessage ? (
         <h2>{resMessage}</h2>
       ) : (
-        <h2>Unable to load user notes</h2>
+        <h2>Unable to load users</h2>
       )}
       <BackButton />
     </div>

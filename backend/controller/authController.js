@@ -115,4 +115,14 @@ async function logout(req, res, next) {
   }
 }
 
-module.exports = { login, refresh, logout };
+//GET /auth/validate
+function validateAccess(req, res) {
+  try {
+    return res.status(200).json({ message: "OK" });
+  } catch (err) {
+    logError(err, req);
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+}
+
+module.exports = { login, refresh, logout, validateAccess };

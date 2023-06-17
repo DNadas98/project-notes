@@ -17,6 +17,7 @@ import EditUser from "./components/admin/users/EditUser";
 import Error from "./components/Error";
 import NotFound from "./components/404";
 import ErrorBoundary from "./components/500";
+import AdminNotesList from "./components/admin/notes/AdminNotesList";
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
             <Route index element={<AdminHome />} />
             <Route path="users" element={<UsersList />} />
             <Route path="users/edit" element={<EditUser />} />
+            <Route path="users/notes" element={<AdminNotesList />} />
+            <Route path="notes/all" element={<AdminNotesList />} />
           </Route>
         </Route>
         {/*Error*/}

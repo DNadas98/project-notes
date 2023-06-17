@@ -45,6 +45,8 @@ function useApiFetch() {
         return { "httpResponse": httpResponse, "responseObject": responseObject };
       } catch (err) {
         return { "httpResponse": null, "responseObject": null };
+      } finally {
+        console.clear();
       }
     },
     [auth.accessToken, logout]

@@ -22,43 +22,56 @@ function UserItem({ user, getUsers }) {
   }
 
   return (
-    <tr className="UserItem">
-      <Confirm
-        showConfirm={showConfirm}
-        setShowConfirm={setShowConfirm}
-        confirmText={confirmText}
-        onConfirm={onConfirm}
-      />
-      <tr>
-        <td>
-          <h2>{user.username}</h2>
-        </td>
-        <td>
-          <Link to="edit" state={{ "userid": user._id }}>
-            <button className="smallButton">✏️</button>
-          </Link>
-        </td>
-        <td>
-          <button
-            className="smallButton"
-            onClick={() => {
-              setConfirmText(`Are you sure you want to delete "${user.username}"?`);
-              setOnConfirm(() => handleDelete);
-              setShowConfirm(true);
-            }}
-          >
-            <h2>X</h2>
+    <tr>
+      <td className="hiddenCell">
+        <Confirm
+          showConfirm={showConfirm}
+          setShowConfirm={setShowConfirm}
+          confirmText={confirmText}
+          onConfirm={onConfirm}
+        />
+      </td>
+      <td className="username">
+        <h2>{user.username}</h2>
+      </td>
+      <td>
+        <table>
+          <tbody>
+            <tr>
+              <td>Status:</td>
+              <td>{user.active ? <span className="green">Active</span> : <span className="red">Inactive</span>}</td>
+            </tr>
+            <tr>
+              <td>Roles:</td>
+              <td>{user.roles.join(", ")}</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td>
+        <Link to="notes" state={{ "user": user }}>
+          <button className="smallButton">
+            <h1>🗎</h1>
           </button>
-        </td>
-      </tr>
-      <tr>
-        <td>{user.active ? <p className="green">Active</p> : <p className="red">Inactive</p>}</td>
-      </tr>
-      <tr>
-        <td>
-          <p>Roles: {user.roles.join(", ")}</p>
-        </td>
-      </tr>
+        </Link>
+      </td>
+      <td>
+        <Link to="edit" state={{ "userid": user._id }}>
+          <button className="smallButton">✏️</button>
+        </Link>
+      </td>
+      <td>
+        <button
+          className="smallButton"
+          onClick={() => {
+            setConfirmText(`Are you sure you want to delete "${user.username}"?`);
+            setOnConfirm(() => handleDelete);
+            setShowConfirm(true);
+          }}
+        >
+          <h2>X</h2>
+        </button>
+      </td>
     </tr>
   );
 }

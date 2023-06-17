@@ -17,7 +17,7 @@ router.use(verifyJWT, verifyUser, (req, res, next) => verifyRoles(req, res, next
 
 router.route("/users").get(getAllUsers).patch(updateUserById).delete(deleteUserById);
 router.route("/users/:id").get(getUserById);
-router.route("/notes").get(getNotesOfUser).post(createNote).patch(updateNote).delete(deleteNote);
-router.route("/notes/all").get(getAllNotes);
+router.route("/notes").get(getAllNotes).post(createNote).patch(updateNote).delete(deleteNote);
+router.route("/notes/:id").get(getNotesOfUser);
 
 module.exports = router;

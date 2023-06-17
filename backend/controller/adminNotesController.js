@@ -2,10 +2,10 @@ const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 const { isValidObjectId } = require("mongoose");
 
-//GET /notes
+//GET /notes/:id
 async function getNotesOfUser(req, res, next) {
   try {
-    const { userid } = req.body;
+    const userid = decodeURI(req?.params?.id);
     if (!userid) {
       return res.status(400).json({ message: "User ID is required" });
     }
@@ -23,14 +23,14 @@ async function getNotesOfUser(req, res, next) {
   }
 }
 
-//GET /notes/all
+//GET /notes/
 async function getAllNotes(req, res, next) {
   try {
     const notes = await Note.find().lean();
     if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
       return res.status(404).json({ message: "No notes found" });
     }
-    return res.status(200).json(notes);
+    return res.status(200).json({ data: notes });
   } catch (err) {
     logError(err, req);
     return next(err);
