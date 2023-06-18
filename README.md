@@ -184,8 +184,15 @@
     - this is why 'empty' `/validate` and `validate/admin` endpoints are needed
 - `hooks/useApiFetch`
   - custom fetch hook, `required for all API fetches`
-    - has the current API url
-    - handles token strategy mentioned above consistently
+  - has the current API url
+  - handles token strategy mentioned above consistently
+  - usage:
+  ```js
+  import ...
+  const apiFetch=useApiFetch();
+  // ...
+  const {httpResponse,responseObject} = await apiFetch()
+  ```
 
 ### Custom 'utility' components
 
@@ -205,6 +212,7 @@
   - set these where the function would be called
   - example:
   ```js
+  import ...
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [onConfirm, setOnConfirm] = useState(null);
@@ -242,4 +250,5 @@
 - `style/App.css`
 - css variables for colors, transition speed
 - Flex layout
+- confirm: absolute positioned 'popup'
 - tables (could be improved)
