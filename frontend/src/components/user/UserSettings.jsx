@@ -12,7 +12,8 @@ function UserSettings() {
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
   const [showConfirm, setShowConfirm] = useState(false);
-  const confirmText = "Are you sure you want to update your user settings?\nYou will be required to log in again.";
+  const [confirmText, setConfirmText] = useState("");
+  const [onConfirm, setOnConfirm] = useState(null);
 
   async function handleSubmit(event) {
     try {
@@ -30,6 +31,8 @@ function UserSettings() {
         validInput = false;
       }
       if (validInput) {
+        setConfirmText("Are you sure you want to update your user settings?\nYou will be required to log in again.");
+        setOnConfirm(() => fetchUpdate);
         setShowConfirm(true);
       }
     } catch (err) {
@@ -59,7 +62,24 @@ function UserSettings() {
     } catch (err) {
       setResultMessage("Failed to update settings");
     } finally {
-      setShowConfirm(false);
+      setOnConfirm(null);
+    }
+  }
+
+  async function fetchDelete() {
+    try {
+      const { httpResponse, responseObject } = await apiFetch("DELETE", "user");
+      if (httpResponse.status === 200 && responseObject?.message) {
+        await logout();
+      } else if (responseObject?.message) {
+        setResultMessage(responseObject.message);
+      } else {
+        setResultMessage("Failed to delete account");
+      }
+    } catch (err) {
+      setResultMessage("Failed to delete account");
+    } finally {
+      setOnConfirm(null);
     }
   }
 
@@ -69,7 +89,7 @@ function UserSettings() {
         showConfirm={showConfirm}
         setShowConfirm={setShowConfirm}
         confirmText={confirmText}
-        onConfirm={fetchUpdate}
+        onConfirm={onConfirm}
       />
       <h1>User settings</h1>
       {resultMessage ? <h3 className="red">{resultMessage}</h3> : <h3>Please enter your data to update</h3>}
@@ -87,6 +107,15 @@ function UserSettings() {
         <input type="password" id="confirm_password" ref={confirmPasswordRef} />
         <button>Save</button>
       </form>
+      <button
+        onClick={() => {
+          setConfirmText("Are you sure you want to delete your account?\nThis action is irreversible.");
+          setOnConfirm(() => fetchDelete);
+          setShowConfirm(true);
+        }}
+      >
+        Delete account
+      </button>
       <ConfirmBackButton />
     </div>
   );

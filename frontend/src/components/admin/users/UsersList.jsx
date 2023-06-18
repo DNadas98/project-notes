@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useApiFetch from "../../../hooks/useApiFetch";
 import BackButton from "../../BackButton";
 import UserItem from "./UserItem";
+import AdminItem from "./AdminItem";
 
 function UsersList() {
   const apiFetch = useApiFetch();
@@ -35,8 +36,7 @@ function UsersList() {
     setFilteredUsers(users.filter((user) => user.username.toLowerCase().includes(searchValue.toLowerCase())));
   }
   return (
-    <div className="UsersList column">
-      <h1>Users</h1>
+    <div className="column">
       <input
         type="text"
         placeholder="Search users"
@@ -47,13 +47,38 @@ function UsersList() {
       {loading ? (
         <h2>Loading...</h2>
       ) : users ? (
-        <table>
-          <tbody>
-            {filteredUsers.map((user) => {
-              return <UserItem key={user._id} user={user} getUsers={getUsers} />;
-            })}
-          </tbody>
-        </table>
+        <div className="UsersList column">
+          <h1>Users</h1>
+          <table className="usersTable">
+            <tbody>
+              {filteredUsers
+                .filter((user) => !user.roles.includes("Editor") && !user.roles.includes("Admin"))
+                .map((user) => {
+                  return <UserItem key={user._id} user={user} getUsers={getUsers} />;
+                })}
+            </tbody>
+          </table>
+          <h1>Editors</h1>
+          <table className="usersTable">
+            <tbody>
+              {filteredUsers
+                .filter((user) => user.roles.includes("Editor") && !user.roles.includes("Admin"))
+                .map((user) => {
+                  return <UserItem key={user._id} user={user} getUsers={getUsers} />;
+                })}
+            </tbody>
+          </table>
+          <h1>Admins</h1>
+          <table className="adminsTable">
+            <tbody>
+              {filteredUsers
+                .filter((user) => user.roles.includes("Admin"))
+                .map((admin) => {
+                  return <AdminItem key={admin._id} admin={admin} />;
+                })}
+            </tbody>
+          </table>
+        </div>
       ) : resMessage ? (
         <h2>{resMessage}</h2>
       ) : (

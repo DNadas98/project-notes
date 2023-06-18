@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 async function getUserData(req, res, next) {
   try {
     const userid = req.userid;
-    const user = await User.findById(userid).select("-_id -password -active -__v").lean();
+    const user = await User.findById(userid).select("-_id -password -refreshTokens -active -__v").lean();
     return res.status(200).json({ "data": user });
   } catch (err) {
     logError(err, req);
@@ -74,16 +74,12 @@ async function deleteUser(req, res, next) {
   try {
     const userid = req.userid;
     const user = await User.findById(userid).exec();
-    if (!user) {
-      console.warn("verifyJWT failed at deleteUser");
-      return res.status(404).json({ message: `User not found` });
-    }
     const note = await Note.findOne({ userid }).lean();
     if (note) {
       await Note.deleteMany({ userid });
     }
     const result = await user.deleteOne();
-    if (result.deletedCount > 0) {
+    if (result) {
       return res.status(200).json({ message: `User named ${user.username} with ID ${user._id} deleted successfully` });
     }
     return res.status(400).json({ message: "Failed to delete user" });

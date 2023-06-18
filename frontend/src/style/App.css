@@ -334,3 +334,7 @@ td table td {
 .hiddenCell {
   padding: 0;
 }
+
+.adminsTable {
+  width: fit-content;
+}
