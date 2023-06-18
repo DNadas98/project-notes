@@ -21,15 +21,24 @@ async function login(req, res) {
     if (!pwdMatching) {
       return res.status(401).json({ message: "Wrong username or password" });
     }
-    if (oldRefreshToken && foundUser.refreshTokens.includes(oldRefreshToken)) {
-      foundUser.refreshTokens.splice(foundUser.refreshTokens.indexOf(oldRefreshToken), 1);
-    }
-    //invalid reuse attempt
-    else if (oldRefreshToken) {
-      foundUser.refreshTokens = [];
-      await foundUser.save();
-      res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-      return res.status(401).json({ message: "Unauthorized" });
+
+    if (oldRefreshToken && foundUser.refreshTokens.length > 0) {
+      let isValid = false;
+      for (let i = 0; i < foundUser.refreshTokens.length; i++) {
+        const matching = await bcrypt.compare(oldRefreshToken, foundUser.refreshTokens[i]);
+        if (matching) {
+          isValid = true;
+          foundUser.refreshTokens.splice(i, 1);
+          break;
+        }
+      }
+      if (!isValid) {
+        //detected an already invalidated refresh token --> invalidate all tokens
+        foundUser.refreshTokens = [];
+        await foundUser.save();
+        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+        return res.status(401).json({ message: "Unauthorized" });
+      }
     }
 
     //create accessToken, refreshToken
@@ -43,7 +52,9 @@ async function login(req, res) {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: `${process.env.REFRESH_TOKEN_EXPIRESIN}`, algorithm: "HS256" }
     );
-    foundUser.refreshTokens.push(newRefreshToken);
+    const hashedNewRefreshToken = await bcrypt.hash(newRefreshToken, 10);
+    foundUser.refreshTokens.push(hashedNewRefreshToken);
+
     const updatedUser = await foundUser.save();
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
@@ -81,7 +92,19 @@ async function refresh(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const foundUser = await User.findOne({ _id: userid, roles }).lean();
-    if (!foundUser || !foundUser.active || !foundUser.refreshTokens.includes(refreshToken)) {
+    if (!foundUser || !foundUser.active) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    let isValid = false;
+    for (let i = 0; i < foundUser.refreshTokens.length; i++) {
+      const matching = await bcrypt.compare(refreshToken, foundUser.refreshTokens[i]);
+      if (matching) {
+        isValid = true;
+        break;
+      }
+    }
+    if (!isValid) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -101,7 +124,7 @@ async function refresh(req, res) {
 }
 
 //GET /auth/logout
-async function logout(req, res, next) {
+async function logout(req, res) {
   try {
     const cookies = req.cookies;
     const refreshToken = cookies?.jwt;
@@ -110,17 +133,27 @@ async function logout(req, res, next) {
       return res.status(204).json({ message: "No content" });
     }
 
-    const foundUser = await User.findOne({ refreshTokens: { $in: [refreshToken] } }).exec();
-
-    if (foundUser) {
-      foundUser.refreshTokens.splice(foundUser.refreshTokens.indexOf(refreshToken), 1);
-      await foundUser.save();
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
+    const userid = decoded?.UserInfo?.userid;
+    if (isValidObjectId(userid)) {
+      const foundUser = await User.findById(userid).exec();
+      if (foundUser) {
+        for (let i = 0; i < foundUser.refreshTokens.length; i++) {
+          const matching = await bcrypt.compare(refreshToken, foundUser.refreshTokens[i]);
+          if (matching) {
+            foundUser.refreshTokens.splice(i, 1);
+            await foundUser.save();
+            break;
+          }
+        }
+      }
     }
+
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     logError(err, req);
-    return next(err);
+    return res.status(400).json({ message: "Invalid request" });
   }
 }
 

@@ -1,6 +1,7 @@
 const { isValidObjectId } = require("mongoose");
 const User = require("../../model/schemas/User");
 const { logError } = require("../logger");
+const bcrypt = require("bcrypt");
 
 async function verifyUser(req, res, next) {
   try {
@@ -11,12 +12,23 @@ async function verifyUser(req, res, next) {
     if (!user || !user.active) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    /* invalid reuse attempt */
-    if (!user.refreshTokens.includes(req.refreshToken)) {
-      user.refreshTokens = [];
-      await user.save();
-      res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-      return res.status(401).json({ message: "Unauthorized" });
+
+    if (req.refreshToken && user.refreshTokens.length > 0) {
+      let isValid = false;
+      for (let i = 0; i < user.refreshTokens.length; i++) {
+        const matching = await bcrypt.compare(req.refreshToken, user.refreshTokens[i]);
+        if (matching) {
+          isValid = true;
+          break;
+        }
+      }
+      if (!isValid) {
+        //detected an already invalidated refresh token --> invalidate all tokens
+        user.refreshTokens = [];
+        await user.save();
+        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+        return res.status(401).json({ message: "Unauthorized" });
+      }
     }
     return next();
   } catch (err) {
