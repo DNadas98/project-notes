@@ -92,7 +92,7 @@ async function refresh(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const foundUser = await User.findOne({ _id: userid, roles }).lean();
-    if (!foundUser || !foundUser.active) {
+    if (!foundUser || !foundUser.active || !foundUser?.refreshTokens?.length >= 1) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
