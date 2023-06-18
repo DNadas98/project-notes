@@ -1,6 +1,6 @@
 import React from "react";
 
-function Confirm({ showConfirm, setShowConfirm, confirmText, onConfirm }) {
+function Confirm({ showConfirm, setShowConfirm, confirmText, onConfirm, setOnConfirm }) {
   return (
     showConfirm && (
       <div className="confirm">
@@ -11,6 +11,7 @@ function Confirm({ showConfirm, setShowConfirm, confirmText, onConfirm }) {
               onClick={() => {
                 onConfirm();
                 setShowConfirm(false);
+                setOnConfirm(null);
               }}
             >
               Confirm

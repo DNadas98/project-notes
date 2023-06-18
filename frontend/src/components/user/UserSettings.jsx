@@ -65,7 +65,6 @@ function UserSettings() {
     } catch (err) {
       setResultMessage("Failed to update settings");
     } finally {
-      setOnConfirm(null);
       setLoading(false);
     }
   }
@@ -84,7 +83,6 @@ function UserSettings() {
     } catch (err) {
       setResultMessage("Failed to delete account");
     } finally {
-      setOnConfirm(null);
       setLoading(false);
     }
   }
@@ -98,6 +96,7 @@ function UserSettings() {
         setShowConfirm={setShowConfirm}
         confirmText={confirmText}
         onConfirm={onConfirm}
+        setOnConfirm={setOnConfirm}
       />
       <h1>User settings</h1>
       {resultMessage ? <h3 className="red">{resultMessage}</h3> : <h3>Please enter your data to update</h3>}

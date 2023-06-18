@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-function UserNoteItem({ note, setConfirmText, setShowConfirm, setNoteId }) {
+function UserNoteItem({ note, setConfirmText, setShowConfirm, handleDelete, setOnConfirm }) {
   const [showDetails, setShowDetails] = useState(false);
   return (
     <li className="UserNoteItem column">
@@ -29,7 +29,9 @@ function UserNoteItem({ note, setConfirmText, setShowConfirm, setNoteId }) {
             className="smallButton"
             onClick={() => {
               setConfirmText(`Are you sure you want to delete "${note.title}"?`);
-              setNoteId(note._id);
+              setOnConfirm(() => () => {
+                handleDelete(note._id);
+              });
               setShowConfirm(true);
             }}
           >

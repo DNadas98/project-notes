@@ -50,7 +50,6 @@ function UsersList() {
       console.log(err);
     } finally {
       setLoading(false);
-      setOnConfirm(null);
     }
   }
 
@@ -64,6 +63,7 @@ function UsersList() {
         setShowConfirm={setShowConfirm}
         confirmText={confirmText}
         onConfirm={onConfirm}
+        setOnConfirm={setOnConfirm}
       />
       <input
         type="text"

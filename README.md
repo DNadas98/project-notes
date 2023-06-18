@@ -81,6 +81,16 @@
   - possible results:
     - response: 204, json message: No content
     - response: 200, body: new JWT access token
+- `GET /validate`: validate the user
+  - --> verifyJWT --> verifyUser -->
+  - requires:
+    - JWT access token
+    - cookie: JWT refresh token
+  - possible results
+    - response: 401, json Unauthorized message
+    - response: 200, json OK message
+- `GET /validate/admin`
+  - same + --> verifyRoles ["Admin"] -->
 
 ### API `/users`
 
@@ -106,7 +116,9 @@
 
   - `GET /`: Read all users
   - `PATCH /`: Update user by ID
+    - can not modify another admin
   - `DELETE /`: Delete user by ID
+    - can not delete another admin
 
   #### `/notes`
 
@@ -123,32 +135,111 @@
   - users
   - notes
 
+# Token Strategy
+
+- Goal: reduce risk of [XSS](https://owasp.org/www-community/attacks/xss/), [CSRF](https://owasp.org/www-community/attacks/csrf)
+- access token
+  - sent in response body, stored only in memory (React context)
+  - fetch: Authorization header
+- refresh token
+  - sent in cookie (HTTP only, sameSite, secure)
+  - also stored as hashed string in the DB
+    - User: `refreshTokens[]`
+    - removed at logout or if an old cookie is still present at new login
+  - can not issue new refresh token
+- if at any point an already invalidated (removed from the db) refresh token is sent:
+  - clear all refresh tokens for the user from the db (logout on all devices)
+  - clear cookie
+  - response: 401, json message: Unauthorized
+- if for any fetch the response is `401` or `403`:
+  - `refresh`
+    - success: update auth context, retry request
+    - failed or retried request is failed or error: `logout`
+  - `only fetch from the API using the custom hook at the frontend`
+
 # Frontend: React
 
 ### Config
 
 - frontend/.env
+  - `PORT=3502`
+  - required for testing (see `corsOptions.js`, `allowedOrigins.js` of backend express server)
+  - if this doesn't exist, create it
 
 ### React routing
 
 - react-router-dom 6
-- App.js
+- App.jsx
 
-### [JWT Strategy](https://youtu.be/nI8PYZNFtac?list=PL0Zuz27SZ-6PRCpm9clX0WiBEMB70FWwd&t=106)
+### Authentication, authorization
 
-- Goal: reduce risk of [XSS](https://owasp.org/www-community/attacks/xss/), [CSRF](https://owasp.org/www-community/attacks/csrf)
-- access token
-  - sent in response body, stored in React context
-  - fetch: Authorization header
-- refresh token
-  - sent and stored in cookie (HTTP only, sameSite, secure)
-  - can not issue new refresh token
-- if at any point there is a 401 or 403 status code:
-  - try to refresh, update auth context, send request again
-  - failed:
-    - clear jwt cookie
-    - redirect to /login
+- `context/auth/AuthProvider.js`
+  - global auth state: username:String, roles:String[], accessToken:String
+- `hooks/auth/useAuth.js`
+  - custom hook to simplify access to auth context
+  - `const {auth,setAuth}=useAuth();`
+- `components/auth/requireAuth.jsx`
+  - verifies, that the user has the required auth context with the correct roles
+  - doesn't validate the information, that only happens on the server side
+    - this is why 'empty' `/validate` and `validate/admin` endpoints are needed
+- `hooks/useApiFetch`
+  - custom fetch hook, `required for all API fetches`
+    - has the current API url
+    - handles token strategy mentioned above consistently
+
+### Custom 'utility' components
+
+- auth/Unauthorized
+- BackButton
+  - `navigate(-1)`
+- ConfirmBackButton
+  - same with confirm message
+- Confirm:
+  - Are you sure ... | Confirm | Cancel |
+  - required states, setters:
+    - `confirmText`: String
+    - `showConfirm`: boolean
+    - `setShowConfirm`: setter
+    - `onConfirm`: function
+    - `setOnConfirm`: setter
+  - set these where the function would be called
+  - example:
+  ```js
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [onConfirm, setOnConfirm] = useState(null);
+  // ...
+  return (
+    <div>
+      <Confirm
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        confirmText={confirmText}
+        onConfirm={onConfirm}
+        setOnConfirm={setOnConfirm}
+      />
+      {/* ... */}
+      <button
+        onClick={() => {
+          setConfirmText(`Are you sure you want to delete this note?`);
+          setOnConfirm(() => () => {
+            handleDelete(note._id);
+          });
+          setShowConfirm(true);
+        }}
+      >
+        <h2>X</h2>
+      </button>
+    </div>
+  );
+  ```
+- LoadingSpinner:
+  - [react-spinners](https://www.npmjs.com/package/react-spinners)
+  - useful for API fetches or any outside data source
 
 ### Style
 
+- `style/App.css`
+- css variables for colors, transition speed
 - Flex layout
+- tables (could be improved)

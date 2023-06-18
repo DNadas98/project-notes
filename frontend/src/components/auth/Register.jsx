@@ -58,7 +58,6 @@ function Register() {
       setResultMessage("Failed to create user");
     } finally {
       setLoading(false);
-      setOnConfirm(null);
     }
   }
 
@@ -69,6 +68,7 @@ function Register() {
         setShowConfirm={setShowConfirm}
         confirmText={confirmText}
         onConfirm={onConfirm}
+        setOnConfirm={setOnConfirm}
       />
       <h1>Register</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to register</p>}

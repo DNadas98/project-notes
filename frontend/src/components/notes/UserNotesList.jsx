@@ -14,7 +14,7 @@ function UserNotesList() {
   const [filteredNotes, setFilteredNotes] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState("");
-  const [noteid, setNoteId] = useState(null);
+  const [onConfirm, setOnConfirm] = useState(null);
 
   async function getUserNotes() {
     try {
@@ -62,9 +62,8 @@ function UserNotesList() {
         showConfirm={showConfirm}
         setShowConfirm={setShowConfirm}
         confirmText={confirmText}
-        onConfirm={() => {
-          handleDelete(noteid);
-        }}
+        onConfirm={onConfirm}
+        setOnConfirm={setOnConfirm}
       />
       <h1>User notes</h1>
       <div className="row">
@@ -90,8 +89,9 @@ function UserNotesList() {
                 note={note}
                 getUserNotes={getUserNotes}
                 setConfirmText={setConfirmText}
-                setNoteId={setNoteId}
+                handleDelete={handleDelete}
                 setShowConfirm={setShowConfirm}
+                setOnConfirm={setOnConfirm}
               />
             );
           })}
