@@ -3,6 +3,8 @@ import useApiFetch from "../../../hooks/useApiFetch";
 import BackButton from "../../BackButton";
 import UserItem from "./UserItem";
 import AdminItem from "./AdminItem";
+import LoadingSpinner from "../../LoadingSpinner";
+import Confirm from "../../Confirm";
 
 function UsersList() {
   const apiFetch = useApiFetch();
@@ -10,6 +12,9 @@ function UsersList() {
   const [users, setUsers] = useState(null);
   const [resMessage, setResMessage] = useState(null);
   const [filteredUsers, setFilteredUsers] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [onConfirm, setOnConfirm] = useState(null);
 
   async function getUsers() {
     try {
@@ -31,13 +36,35 @@ function UsersList() {
   }
   useEffect(() => {
     getUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiFetch]);
+
+  async function handleDelete(userid) {
+    try {
+      setLoading(true);
+      const { httpResponse, responseObject } = await apiFetch("DELETE", "admin/users", { "userid": userid });
+      if (httpResponse?.status === 200 && responseObject?.message) {
+        await getUsers();
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+      setOnConfirm(null);
+    }
+  }
 
   function handleSearch(searchValue) {
     setFilteredUsers(users.filter((user) => user.username.toLowerCase().includes(searchValue.toLowerCase())));
   }
   return (
     <div className="column">
+      <Confirm
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        confirmText={confirmText}
+        onConfirm={onConfirm}
+      />
       <input
         type="text"
         placeholder="Search users"
@@ -46,7 +73,7 @@ function UsersList() {
         }}
       />
       {loading ? (
-        <h2>Loading...</h2>
+        <LoadingSpinner />
       ) : users ? (
         <div className="UsersList column">
           <table className="usersTable">
@@ -59,7 +86,17 @@ function UsersList() {
               {filteredUsers
                 .filter((user) => !user.roles.includes("Editor") && !user.roles.includes("Admin"))
                 .map((user) => {
-                  return <UserItem key={user._id} user={user} getUsers={getUsers} />;
+                  return (
+                    <UserItem
+                      key={user._id}
+                      user={user}
+                      getUsers={getUsers}
+                      handleDelete={handleDelete}
+                      setConfirmText={setConfirmText}
+                      setOnConfirm={setOnConfirm}
+                      setShowConfirm={setShowConfirm}
+                    />
+                  );
                 })}
               <tr>
                 <th colSpan="5">
@@ -69,7 +106,17 @@ function UsersList() {
               {filteredUsers
                 .filter((user) => user.roles.includes("Editor") && !user.roles.includes("Admin"))
                 .map((user) => {
-                  return <UserItem key={user._id} user={user} getUsers={getUsers} />;
+                  return (
+                    <UserItem
+                      key={user._id}
+                      user={user}
+                      getUsers={getUsers}
+                      handleDelete={handleDelete}
+                      setConfirmText={setConfirmText}
+                      setOnConfirm={setOnConfirm}
+                      setShowConfirm={setShowConfirm}
+                    />
+                  );
                 })}
               <tr>
                 <th colSpan="5">

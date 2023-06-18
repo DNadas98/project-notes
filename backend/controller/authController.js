@@ -91,7 +91,7 @@ async function refresh(req, res) {
     if (!isValidObjectId(userid) || !Array.isArray(roles)) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const foundUser = await User.findOne({ _id: userid, roles }).lean();
+    const foundUser = await User.findOne({ _id: userid, roles }).exec();
     if (!foundUser || !foundUser.active || !foundUser?.refreshTokens?.length >= 1) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -105,6 +105,9 @@ async function refresh(req, res) {
       }
     }
     if (!isValid) {
+      foundUser.refreshTokens = [];
+      await foundUser.save();
+      res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -135,17 +138,23 @@ async function logout(req, res) {
 
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
     const userid = decoded?.UserInfo?.userid;
+
     if (isValidObjectId(userid)) {
       const foundUser = await User.findById(userid).exec();
       if (foundUser) {
+        let isValid = false;
         for (let i = 0; i < foundUser.refreshTokens.length; i++) {
           const matching = await bcrypt.compare(refreshToken, foundUser.refreshTokens[i]);
           if (matching) {
             foundUser.refreshTokens.splice(i, 1);
-            await foundUser.save();
+            isValid = true;
             break;
           }
         }
+        if (!isValid) {
+          foundUser.refreshTokens = [];
+        }
+        await foundUser.save();
       }
     }
 

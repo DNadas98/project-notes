@@ -3,16 +3,18 @@ import useApiFetch from "../../hooks/useApiFetch";
 import NoteForm from "./NoteForm";
 import ConfirmBackButton from "../ConfirmBackButton";
 import BackButton from "../BackButton";
+import LoadingSpinner from "../LoadingSpinner";
 
 function CreateNote() {
   const [note, setNote] = useState({ "title": "", "text": "", "completed": false });
   const [message, setMessage] = useState("Create new note");
   const [created, setCreated] = useState(false);
+  const [loading, setLoading] = useState(false);
   const apiFetch = useApiFetch();
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log("post");
+    setLoading(true);
     try {
       const { responseObject, httpResponse } = await apiFetch("POST", "notes", {
         "title": note.title,
@@ -21,7 +23,6 @@ function CreateNote() {
       });
       if (responseObject?.message) {
         setMessage(responseObject.message);
-        console.log(httpResponse);
         if (httpResponse.status === 201) {
           setCreated(true);
         }
@@ -32,10 +33,14 @@ function CreateNote() {
     } catch (err) {
       setNote(null);
       setMessage("Failed to create note");
+    } finally {
+      setLoading(false);
     }
   }
 
-  return (
+  return loading ? (
+    <LoadingSpinner />
+  ) : (
     <div className="column">
       {created ? (
         <div className="column">

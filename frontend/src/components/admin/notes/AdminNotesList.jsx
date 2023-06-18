@@ -35,7 +35,7 @@ function AdminNotesList() {
       }
     }
     getNotes();
-  }, [apiFetch, setLoading, user?._id]);
+  }, [apiFetch, setLoading, user]);
 
   function handleSearch(searchValue) {
     setFilteredNotes(userNotes.filter((note) => note.title.toLowerCase().includes(searchValue.toLowerCase())));

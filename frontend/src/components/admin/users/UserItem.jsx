@@ -1,36 +1,9 @@
-import React, { useState } from "react";
-import useApiFetch from "../../../hooks/useApiFetch";
-import Confirm from "../../Confirm";
+import React from "react";
 import { Link } from "react-router-dom";
 
-function UserItem({ user, getUsers }) {
-  const apiFetch = useApiFetch();
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
-  const [onConfirm, setOnConfirm] = useState(null);
-
-  async function handleDelete() {
-    try {
-      const { httpResponse, responseObject } = await apiFetch("DELETE", "admin/users", { "userid": user._id });
-      if (httpResponse?.status === 200 && responseObject?.message) {
-        await getUsers();
-      }
-    } catch (err) {
-    } finally {
-      setOnConfirm(null);
-    }
-  }
-
+function UserItem({ user, handleDelete, setConfirmText, setOnConfirm, setShowConfirm }) {
   return (
     <tr>
-      <td className="hiddenCell">
-        <Confirm
-          showConfirm={showConfirm}
-          setShowConfirm={setShowConfirm}
-          confirmText={confirmText}
-          onConfirm={onConfirm}
-        />
-      </td>
       <td className="username">
         <h2>{user.username}</h2>
       </td>
@@ -65,7 +38,7 @@ function UserItem({ user, getUsers }) {
           className="smallButton"
           onClick={() => {
             setConfirmText(`Are you sure you want to delete "${user.username}"?`);
-            setOnConfirm(() => handleDelete);
+            setOnConfirm(() => () => handleDelete(user._id));
             setShowConfirm(true);
           }}
         >

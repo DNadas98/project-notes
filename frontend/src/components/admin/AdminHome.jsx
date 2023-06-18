@@ -2,13 +2,12 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import format from "date-fns/format";
 import useLogout from "../../hooks/auth/useLogout";
-import useRefresh from "../../hooks/auth/useRefresh";
 import useApiFetch from "../../hooks/useApiFetch";
 import Unauthorized from "../auth/Unauthorized";
+import LoadingSpinner from "../LoadingSpinner";
 
 function AdminHome() {
   const logout = useLogout();
-  const refresh = useRefresh();
   const todaysDate = format(new Date(), "yyyy. MM. dd.");
   const apiFetch = useApiFetch();
   const [loading, setLoading] = useState(true);
@@ -34,7 +33,7 @@ function AdminHome() {
   }, [apiFetch, logout]);
 
   return loading ? (
-    <h1>Loading...</h1>
+    <LoadingSpinner />
   ) : valid ? (
     <div className="AdminHome column">
       <h2>Admin Panel</h2>

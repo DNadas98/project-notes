@@ -2,11 +2,13 @@ import React, { useRef, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/auth/useAuth";
 import useApiFetch from "../../hooks/useApiFetch";
+import LoadingSpinner from "../LoadingSpinner";
 
 function Login() {
   const location = useLocation();
   const { setAuth } = useAuth();
   const apiFetch = useApiFetch();
+  const [loading, setLoading] = useState(false);
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const usernameRef = useRef();
@@ -15,6 +17,7 @@ function Login() {
   async function handleSubmit(event) {
     try {
       event.preventDefault();
+      setLoading(true);
       const username = usernameRef.current.value;
       const password = passwordRef.current.value;
       if (!username || !password) {
@@ -41,6 +44,8 @@ function Login() {
       }
     } catch (err) {
       setResultMessage("Login failed");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -48,7 +53,9 @@ function Login() {
     <div className="Login column">
       <h1>Login</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to log in</p>}
-      {successful ? (
+      {loading ? (
+        <LoadingSpinner />
+      ) : successful ? (
         <Navigate to="/user" state={{ from: location }} />
       ) : (
         <form

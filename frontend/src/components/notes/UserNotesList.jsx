@@ -3,6 +3,8 @@ import useApiFetch from "../../hooks/useApiFetch";
 import BackButton from "../BackButton";
 import UserNoteItem from "./UserNoteItem";
 import { Link } from "react-router-dom";
+import LoadingSpinner from "../LoadingSpinner";
+import Confirm from "../Confirm";
 
 function UserNotesList() {
   const apiFetch = useApiFetch();
@@ -10,6 +12,9 @@ function UserNotesList() {
   const [userNotes, setUserNotes] = useState(null);
   const [resMessage, setResMessage] = useState(null);
   const [filteredNotes, setFilteredNotes] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [noteid, setNoteId] = useState(null);
 
   async function getUserNotes() {
     try {
@@ -31,7 +36,21 @@ function UserNotesList() {
 
   useEffect(() => {
     getUserNotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiFetch, setLoading]);
+
+  async function handleDelete(noteid) {
+    try {
+      setLoading(true);
+      const { httpResponse, responseObject } = await apiFetch("DELETE", "notes", { "_id": noteid });
+      if (httpResponse?.status === 200 && responseObject?.message) {
+        await getUserNotes();
+      }
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function handleSearch(searchValue) {
     setFilteredNotes(userNotes.filter((note) => note.title.toLowerCase().includes(searchValue.toLowerCase())));
@@ -39,6 +58,14 @@ function UserNotesList() {
 
   return (
     <div className="UserNotesList column">
+      <Confirm
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        confirmText={confirmText}
+        onConfirm={() => {
+          handleDelete(noteid);
+        }}
+      />
       <h1>User notes</h1>
       <div className="row">
         <input
@@ -53,11 +80,20 @@ function UserNotesList() {
         </Link>
       </div>
       {loading ? (
-        <h2>Loading...</h2>
+        <LoadingSpinner />
       ) : userNotes ? (
         <ul className="column">
           {filteredNotes.map((note) => {
-            return <UserNoteItem key={note._id} note={note} getUserNotes={getUserNotes} />;
+            return (
+              <UserNoteItem
+                key={note._id}
+                note={note}
+                getUserNotes={getUserNotes}
+                setConfirmText={setConfirmText}
+                setNoteId={setNoteId}
+                setShowConfirm={setShowConfirm}
+              />
+            );
           })}
         </ul>
       ) : resMessage ? (

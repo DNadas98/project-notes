@@ -3,6 +3,7 @@ import useApiFetch from "../../hooks/useApiFetch";
 import useLogout from "../../hooks/auth/useLogout";
 import ConfirmBackButton from "../ConfirmBackButton";
 import Confirm from "../Confirm";
+import LoadingSpinner from "../LoadingSpinner";
 
 function UserSettings() {
   const apiFetch = useApiFetch();
@@ -14,6 +15,7 @@ function UserSettings() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [onConfirm, setOnConfirm] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event) {
     try {
@@ -42,6 +44,7 @@ function UserSettings() {
 
   async function fetchUpdate() {
     try {
+      setLoading(true);
       const username = usernameRef.current.value;
       const password = passwordRef.current.value;
       let requestBody = {};
@@ -63,11 +66,13 @@ function UserSettings() {
       setResultMessage("Failed to update settings");
     } finally {
       setOnConfirm(null);
+      setLoading(false);
     }
   }
 
   async function fetchDelete() {
     try {
+      setLoading(true);
       const { httpResponse, responseObject } = await apiFetch("DELETE", "user");
       if (httpResponse.status === 200 && responseObject?.message) {
         await logout();
@@ -80,10 +85,13 @@ function UserSettings() {
       setResultMessage("Failed to delete account");
     } finally {
       setOnConfirm(null);
+      setLoading(false);
     }
   }
 
-  return (
+  return loading ? (
+    <LoadingSpinner />
+  ) : (
     <div className="UserSettings column">
       <Confirm
         showConfirm={showConfirm}

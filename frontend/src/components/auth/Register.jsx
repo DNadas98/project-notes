@@ -2,15 +2,21 @@ import React, { useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import useApiFetch from "../../hooks/useApiFetch";
 import BackButton from "../BackButton";
+import LoadingSpinner from "../LoadingSpinner";
+import Confirm from "../Confirm";
 
 function Register() {
   const location = useLocation();
   const apiFetch = useApiFetch();
+  const [loading, setLoading] = useState(false);
   const [successful, setSuccessful] = useState(false);
   const [resultMessage, setResultMessage] = useState(null);
   const usernameRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [onConfirm, setOnConfirm] = useState(null);
 
   async function handleSubmit(event) {
     try {
@@ -28,25 +34,47 @@ function Register() {
         validInput = false;
       }
       if (validInput) {
-        const { httpResponse, responseObject } = await apiFetch("POST", "user", {
-          "username": username,
-          "password": password
-        });
-        setResultMessage(responseObject.message);
-        if (httpResponse.status === 201) {
-          setSuccessful(true);
-        }
+        setConfirmText(`Create user account "${username}"?\nYou will be redirected to login`);
+        setOnConfirm(() => fetchRegister);
+        setShowConfirm(true);
       }
     } catch (err) {
       setResultMessage("Failed to create user");
     }
   }
 
+  async function fetchRegister() {
+    try {
+      setLoading(true);
+      const { httpResponse, responseObject } = await apiFetch("POST", "user", {
+        "username": usernameRef.current.value,
+        "password": passwordRef.current.value
+      });
+      setResultMessage(responseObject.message);
+      if (httpResponse.status === 201) {
+        setSuccessful(true);
+      }
+    } catch (err) {
+      setResultMessage("Failed to create user");
+    } finally {
+      setLoading(false);
+      setOnConfirm(null);
+    }
+  }
+
   return (
     <div className="Register column">
+      <Confirm
+        showConfirm={showConfirm}
+        setShowConfirm={setShowConfirm}
+        confirmText={confirmText}
+        onConfirm={onConfirm}
+      />
       <h1>Register</h1>
       {resultMessage ? <p>{resultMessage}</p> : <p>Please enter your name and password to register</p>}
-      {successful ? (
+      {loading ? (
+        <LoadingSpinner />
+      ) : successful ? (
         <Navigate to="/login" state={{ from: location }} replace />
       ) : (
         <form

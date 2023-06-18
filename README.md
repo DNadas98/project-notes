@@ -29,16 +29,16 @@
   - max 5 login requests in 1 min by IP
 - verifyJWT: [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
   - https://auth0.com/docs/secure/tokens/json-web-tokens
-  - verifies, decodes JWT access token
+  - verifies, decodes JWT tokens, compares their data
   - requires:
     - JWT access token in Authorization header
   - possible results:
     - response: 401, json message: Unauthorized
-    - decoded --> `req.userid, req.roles`, calls `next()`
+    - decoded --> `req.userid, req.roles, req.refreshToken`, calls `next()`
 - verifyUser:
-  - verifies that the user data decoded from the JWT access token exists in the database
+  - verifies that the user data decoded from the JWT tokens exists in the database
   - requires:
-    - req.userid, req.roles
+    - req.userid, req.roles, req.refreshToken
   - possible results:
     - response: 401, json message: Unauthorized
     - calls `next()`

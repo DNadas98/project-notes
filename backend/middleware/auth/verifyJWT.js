@@ -15,7 +15,13 @@ function verifyJWT(req, res, next) {
     const refreshDecoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, {
       algorithms: ["HS256"]
     });
-    if (!accessDecoded || !refreshDecoded || accessDecoded?.UserInfo?.userid !== refreshDecoded?.UserInfo?.userid) {
+    if (
+      !accessDecoded?.UserInfo?.userid ||
+      !accessDecoded?.UserInfo?.roles ||
+      !refreshDecoded?.UserInfo?.userid ||
+      !refreshDecoded?.UserInfo?.roles ||
+      accessDecoded.UserInfo.userid !== refreshDecoded.UserInfo.userid
+    ) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     req.userid = accessDecoded.UserInfo.userid;

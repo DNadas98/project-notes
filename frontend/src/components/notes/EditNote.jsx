@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import useApiFetch from "../../hooks/useApiFetch";
 import NoteForm from "./NoteForm";
 import ConfirmBackButton from "../ConfirmBackButton";
+import LoadingSpinner from "../LoadingSpinner";
 
 function EditNote() {
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,7 @@ function EditNote() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setLoading(true);
     try {
       const { responseObject } = await apiFetch("PATCH", "notes", {
         "_id": noteid,
@@ -46,11 +48,13 @@ function EditNote() {
       }
     } catch (err) {
       setMessage("Failed to update note");
+    } finally {
+      setLoading(false);
     }
   }
 
   return loading ? (
-    <h1>Loading...</h1>
+    <LoadingSpinner />
   ) : (
     <div className="column">
       {note ? (
