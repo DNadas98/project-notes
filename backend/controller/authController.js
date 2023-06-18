@@ -11,19 +11,21 @@ async function login(req, res) {
     const oldRefreshToken = req?.cookies?.jwt;
 
     if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required" });
+      return res.status(400).json({ message: "Missing username or password" });
     }
     const foundUser = await User.findOne({ username }).exec();
     if (!foundUser || !foundUser.active || typeof password !== "string") {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Wrong username or password" });
     }
     const pwdMatching = await bcrypt.compare(password, foundUser.password);
     if (!pwdMatching) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Wrong username or password" });
     }
     if (oldRefreshToken && foundUser.refreshTokens.includes(oldRefreshToken)) {
       foundUser.refreshTokens.splice(foundUser.refreshTokens.indexOf(oldRefreshToken), 1);
-    } /* invalid reuse attempt */ else if (oldRefreshToken) {
+    }
+    //invalid reuse attempt
+    else if (oldRefreshToken) {
       foundUser.refreshTokens = [];
       await foundUser.save();
       res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
