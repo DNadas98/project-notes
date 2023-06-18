@@ -15,8 +15,9 @@ function UsersList() {
     try {
       const { responseObject } = await apiFetch("GET", "admin/users");
       if (responseObject?.data) {
-        setUsers(responseObject.data);
-        setFilteredUsers(responseObject.data);
+        const sortedUsers = responseObject.data.sort((a, b) => a.username.localeCompare(b.username));
+        setUsers(sortedUsers);
+        setFilteredUsers(sortedUsers);
       } else {
         setUsers(null);
         setFilteredUsers(null);
@@ -48,29 +49,33 @@ function UsersList() {
         <h2>Loading...</h2>
       ) : users ? (
         <div className="UsersList column">
-          <h1>Users</h1>
           <table className="usersTable">
             <tbody>
+              <tr>
+                <th colSpan="5">
+                  <h1>Users</h1>
+                </th>
+              </tr>
               {filteredUsers
                 .filter((user) => !user.roles.includes("Editor") && !user.roles.includes("Admin"))
                 .map((user) => {
                   return <UserItem key={user._id} user={user} getUsers={getUsers} />;
                 })}
-            </tbody>
-          </table>
-          <h1>Editors</h1>
-          <table className="usersTable">
-            <tbody>
+              <tr>
+                <th colSpan="5">
+                  <h1>Editors</h1>
+                </th>
+              </tr>
               {filteredUsers
                 .filter((user) => user.roles.includes("Editor") && !user.roles.includes("Admin"))
                 .map((user) => {
                   return <UserItem key={user._id} user={user} getUsers={getUsers} />;
                 })}
-            </tbody>
-          </table>
-          <h1>Admins</h1>
-          <table className="adminsTable">
-            <tbody>
+              <tr>
+                <th colSpan="5">
+                  <h1>Admins</h1>
+                </th>
+              </tr>
               {filteredUsers
                 .filter((user) => user.roles.includes("Admin"))
                 .map((admin) => {

@@ -7,7 +7,16 @@ function AdminItem({ admin }) {
       <td className="username">
         <h2>{admin.username}</h2>
       </td>
-      <td>Status: {admin.active ? <span className="green">Active</span> : <span className="red">Inactive</span>}</td>
+      <td>
+        <table>
+          <tbody>
+            <tr>
+              <td>Status:</td>
+              <td>{admin.active ? <span className="green">Active</span> : <span className="red">Inactive</span>}</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
       <td>
         <Link to="notes" state={{ "user": admin }}>
           <button className="smallButton">
