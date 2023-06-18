@@ -8,6 +8,7 @@ function useApiFetch() {
   const logout = useLogout();
   const refresh = useRefresh();
   const apiUrl = "http://127.0.0.1:3501/api";
+
   const apiFetch = useCallback(
     async (reqMethod, reqPath, reqBody) => {
       try {
@@ -25,7 +26,9 @@ function useApiFetch() {
         if (reqBody) {
           reqConfig.body = JSON.stringify(reqBody);
         }
+
         let httpResponse = await fetch(url, reqConfig);
+
         if (
           (reqPath !== "auth/login" && httpResponse.status === 401) ||
           (reqPath !== "auth/login" && httpResponse.status === 403)
@@ -41,12 +44,13 @@ function useApiFetch() {
             }
           }
         }
+
         const responseObject = await httpResponse.json();
+
         return { "httpResponse": httpResponse, "responseObject": responseObject };
       } catch (err) {
         return { "httpResponse": null, "responseObject": null };
       } finally {
-        console.clear();
       }
     },
     [auth.accessToken, logout]

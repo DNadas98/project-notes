@@ -1,8 +1,7 @@
 const allowedOrigins = [
-  "http://127.0.0.1:3501",
-  "http://localhost:3501",
-  "http://127.0.0.1:3502",
-  "http://localhost:3502"
+  `http://${process.env.IP}:${process.env.PORT}`,
+  `http://localhost:${process.env.PORT}`,
+  `${process.env.FRONTEND_URI}`
 ];
 
 module.exports = allowedOrigins;

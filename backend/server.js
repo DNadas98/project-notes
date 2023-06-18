@@ -21,8 +21,8 @@ server.use(helmet());
 server.use(rateLimiter);
 server.use(banned);
 
-//CORS
-server.use(cors(corsOptions)); //!origin ONLY for developement
+//CORS - !origin ONLY for developement
+server.use(cors(corsOptions));
 
 //Built-in middleware to handle form data, JSON and static files
 server.use(express.urlencoded({ extended: true }));
@@ -69,7 +69,7 @@ connectToDatabase();
 mongoose.connection.once("open", () => {
   console.log(`Connected to mongoDB`);
   server.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT}\nhttp://127.0.0.1:${process.env.PORT}`);
+    console.log(`Server running on port ${process.env.PORT}`);
   });
 });
 mongoose.connection.on("error", (err) => {

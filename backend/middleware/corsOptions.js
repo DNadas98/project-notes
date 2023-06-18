@@ -9,6 +9,7 @@ const corsOptions = {
       callback(null, true);
     } else {
       const err = new Error("Not allowed by CORS");
+      err.status = 403;
       logError(err);
       callback(err);
     }

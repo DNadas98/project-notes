@@ -6,6 +6,7 @@ function useLogout() {
   const { setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   const logout = useCallback(
     async (willfulLogout = false) => {
       try {
@@ -20,10 +21,7 @@ function useLogout() {
         });
       } catch (err) {
       } finally {
-        let path = "/login";
-        if (willfulLogout) {
-          path = "/";
-        }
+        const path = willfulLogout ? "/" : "/login";
         navigate(path, { state: { from: location }, replace: true });
         setAuth({});
       }
