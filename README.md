@@ -170,6 +170,30 @@
 
 - react-router-dom 6
 - App.jsx
+  - public routes: `"/"`
+    - `"/": Home`
+    - `"/login": Login`
+    - `"/register": Register`
+  - user routes: `"/user"`
+    - `"/": UserHome`
+    - `"/notes": UserNotesList`
+    - `"/notes/create": CreateNote`
+    - `"/notes/edit": EditNote`
+    - `"/settings": UserDetails`
+  - admin routes: `"/admin"`
+    - `"/": AdminHome`
+    - `"/users": UsersList`
+    - `"/users/edit": EditUser`
+    - `"/users/notes": AdminNotesList`
+    - `"/notes/all": AdminNotesList`
+  - error handling
+    - `"/err": Error`
+      - test error
+    - `"*": NotFound`
+      - 404
+    - `ErrorBoundary`
+      - 500
+      - wraps all routes
 
 ### Authentication, authorization
 
