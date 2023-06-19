@@ -1,3 +1,12 @@
+# Install & run
+
+- backend:
+  - in root folder: npm i, npm run dev
+  - (yes, the "secrets" are included in config.env, only for testing)
+- frontend:
+  - create .env, write PORT=3502 into it
+  - in root/frontend: npm i, npm start
+
 # My express server
 
 - https://github.com/DNadas98/express_server
