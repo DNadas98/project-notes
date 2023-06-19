@@ -1,4 +1,4 @@
-# My express server
+# Express server
 
 - https://github.com/DNadas98/express_server
 
