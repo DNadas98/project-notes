@@ -108,8 +108,8 @@ async function deleteNote(req, res, next) {
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
-    const deleted = await note.deleteOne();
-    if (deleted) {
+    const result = await note.deleteOne();
+    if (result) {
       return res.status(200).json({ message: `Note with title ${note.title} deleted successfully` });
     }
     return res.status(400).json({ message: "Failed to delete note" });

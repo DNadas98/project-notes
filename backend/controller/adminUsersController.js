@@ -98,7 +98,7 @@ async function deleteUserById(req, res, next) {
       await Note.deleteMany({ userid });
     }
     const result = await User.deleteOne({ _id: userid });
-    if (result.deletedCount > 0) {
+    if (result) {
       return res.status(200).json({ message: `User with ID ${user._id} deleted successfully` });
     }
     return res.status(400).json({ message: "Failed to delete user" });
