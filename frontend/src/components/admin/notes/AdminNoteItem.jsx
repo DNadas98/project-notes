@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import remarkGfm from "remark-gfm";
 
-function AdminNoteItem({ note }) {
+function AdminNoteItem({ note, setConfirmText, setOnConfirm, handleDelete, setShowConfirm }) {
   const [showDetails, setShowDetails] = useState(false);
   return (
     <li className="UserNoteItem column">
@@ -20,6 +20,18 @@ function AdminNoteItem({ note }) {
             }}
           >
             <h2>{showDetails ? "▲" : "▼"}</h2>
+          </button>
+          <button
+            className="smallButton"
+            onClick={() => {
+              setConfirmText(`Are you sure you want to delete "${note.title}"?`);
+              setOnConfirm(() => () => {
+                handleDelete(note._id);
+              });
+              setShowConfirm(true);
+            }}
+          >
+            <h2>X</h2>
           </button>
         </div>
       </div>

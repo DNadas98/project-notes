@@ -92,11 +92,11 @@ async function updateNote(req, res, next) {
 //DELETE /notes
 async function deleteNote(req, res, next) {
   try {
-    const { id } = req.body;
-    if (!id) {
+    const { _id } = req.body;
+    if (!_id) {
       return res.status(400).json({ message: "Note ID required" });
     }
-    const note = await Note.findById(id).exec();
+    const note = await Note.findById(_id).exec();
     if (!note) {
       return res.status(404).json({ message: "Note not found" });
     }
