@@ -1,9 +1,10 @@
 import { format } from "date-fns";
 import React, { useState } from "react";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { Link } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 
-function AdminNoteItem({ note, setConfirmText, setOnConfirm, handleDelete, setShowConfirm }) {
+function AdminNoteItem({ note, user, setConfirmText, setOnConfirm, handleDelete, setShowConfirm }) {
   const [showDetails, setShowDetails] = useState(false);
   return (
     <li className="UserNoteItem column">
@@ -21,6 +22,13 @@ function AdminNoteItem({ note, setConfirmText, setOnConfirm, handleDelete, setSh
           >
             <h2>{showDetails ? "▲" : "▼"}</h2>
           </button>
+          {user && (
+            <Link to="edit" state={{ "noteid": note._id, "userid": user._id }}>
+              <button className="smallButton">
+                <h2>✏️</h2>
+              </button>
+            </Link>
+          )}
           <button
             className="smallButton"
             onClick={() => {

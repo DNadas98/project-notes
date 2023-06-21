@@ -87,6 +87,7 @@ function AdminNotesList() {
               <AdminNoteItem
                 key={note._id}
                 note={note}
+                user={user}
                 handleDelete={handleDelete}
                 setConfirmText={setConfirmText}
                 setOnConfirm={setOnConfirm}

@@ -2,18 +2,24 @@ const Note = require("../model/schemas/Note");
 const { logError } = require("../middleware/logger");
 const { isValidObjectId } = require("mongoose");
 
-//GET /notes/:id
+//GET admin/notes/:id?note=noteid
 async function getNotesOfUser(req, res, next) {
   try {
     const userid = decodeURI(req?.params?.id);
+    const noteid = decodeURI(req?.query?.note);
     if (!userid) {
       return res.status(400).json({ message: "User ID is required" });
     }
     if (!isValidObjectId(userid)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
-    const notes = await Note.find({ userid }).lean();
-    if (!notes || !Array.isArray(notes) || !notes.length >= 1) {
+    let notes;
+    if (noteid && isValidObjectId(noteid)) {
+      notes = await Note.findOne({ _id: noteid, userid: userid });
+    } else {
+      notes = await Note.find({ userid }).lean();
+    }
+    if (!notes || (!noteid && !Array.isArray(notes)) || (!noteid && !notes.length >= 1)) {
       return res.status(404).json({ message: "No notes found" });
     }
     return res.status(200).json({ "data": notes });
@@ -63,16 +69,16 @@ async function createNote(req, res, next) {
 //PATCH /notes
 async function updateNote(req, res, next) {
   try {
-    const { id, userid, title, text, completed } = req.body;
-    if (!id || !userid || !title || !text || !completed || typeof completed !== "boolean") {
+    const { _id, userid, title, text, completed } = req.body;
+    if (!_id || !userid || !title || !text || !completed || typeof completed !== "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
     }
-    const note = await Note.findById(id).exec();
+    const note = await Note.findById(_id).exec();
     if (!note) {
       return res.status(404).json({ message: `Note ${title} not found` });
     }
     const duplicate = await Note.findOne({ userid, title }).lean();
-    if (duplicate && duplicate?._id.toString() !== id) {
+    if (duplicate && duplicate?._id.toString() !== _id) {
       return res.status(409).json({ message: `Note with title ${title} already exists` });
     }
     note.title = title;
