@@ -17,7 +17,6 @@ function EditUser() {
         const encodedId = encodeURI(userid);
         const { responseObject } = await apiFetch("GET", `admin/users/${encodedId}`);
         if (responseObject?.data) {
-          console.log(responseObject.data);
           setUser(responseObject.data);
         } else {
           setUser(null);
