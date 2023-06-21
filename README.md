@@ -143,6 +143,7 @@
 - projectsdb
   - users
   - notes
+- [reminder to check out transactions in mongoose](https://mongoosejs.com/docs/transactions.html#with-mongoose-documents-and-save)
 
 # Token Strategy
 
