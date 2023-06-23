@@ -122,6 +122,7 @@ async function refresh(req, res) {
       .json({ "accessToken": accessToken, "username": foundUser.username, "roles": foundUser.roles });
   } catch (err) {
     logError(err, req);
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.status(401).json({ message: "Unauthorized" });
   }
 }
