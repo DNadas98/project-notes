@@ -8,13 +8,13 @@
   - in root/frontend: npm i, npm start
 
 # To Do
-[ ] implement input sanitization, validation, related security measures on client and server side
-[ ] implement transactions to make the most critical interactions atomic at the DB level
-[ ] refactor frontend:
-  [ ] single responsibility principle (the fetch hooks for example)
-  [ ] react controlled / uncontrolled form format, names and other properties of elements
-  [ ] make tables tables instead of lists with weird css
-[ ] add some meaningful content to the app
+- [ ] implement input sanitization, validation, related security measures on client and server side
+- [ ] implement transactions to make the most critical interactions atomic at the DB level
+- [ ] refactor frontend:
+  - [ ] single responsibility principle (the fetch hooks for example)
+  - [ ] react controlled / uncontrolled form format, names and other properties of elements
+  - [ ] make tables tables instead of lists with weird css
+- [ ] add some meaningful content to the app
 
 # My express server
 
