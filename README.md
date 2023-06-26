@@ -8,7 +8,7 @@
   - in root/frontend: npm i, npm start
 
 # To Do
-- implement input sanitization, validation, related security measures on both client and server side
+- implement input sanitization, validation, related security measures on client and server side
 - implement transactions to make the most critical interactions atomic at the DB level
 - refactor frontend:
   - single responsibility principle (the fetch hooks for example)
