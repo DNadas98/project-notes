@@ -7,6 +7,14 @@
   - create .env, write PORT=3502 into it
   - in root/frontend: npm i, npm start
 
+# To Do
+- implement transactions to make the most critical interactions atomic at the DB level
+- refactor frontend:
+  - single responsibility principle (the fetch hooks for example)
+  - react controlled / uncontrolled form format, names and other properties of elements
+  - make tables tables instead of lists with weird css
+- add some meaningful content to the frontend
+
 # My express server
 
 - https://github.com/DNadas98/express_server
