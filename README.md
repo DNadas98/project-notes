@@ -13,7 +13,7 @@
   - single responsibility principle (the fetch hooks for example)
   - react controlled / uncontrolled form format, names and other properties of elements
   - make tables tables instead of lists with weird css
-- add some meaningful content to the frontend
+- add some meaningful content to the app
 
 # My express server
 
