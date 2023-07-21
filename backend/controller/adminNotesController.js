@@ -70,7 +70,7 @@ async function createNote(req, res, next) {
 async function updateNote(req, res, next) {
   try {
     const { _id, userid, title, text, completed } = req.body;
-    if (!_id || !userid || !title || !text || !completed || typeof completed !== "boolean") {
+    if (!_id || !userid || typeof completed !== "boolean") {
       return res.status(400).json({ message: "Invalid update request" });
     }
     const note = await Note.findById(_id).exec();
@@ -86,7 +86,9 @@ async function updateNote(req, res, next) {
     note.completed = completed;
     const updatedNote = await note.save();
     if (updateNote) {
-      return res.status(200).json({ message: `${updatedNote.title} updated successfully` });
+      return res
+        .status(200)
+        .json({ message: `${updatedNote.title} updated successfully` });
     }
     return res.status(400).json({ message: "Failed to update note" });
   } catch (err) {
@@ -110,7 +112,9 @@ async function deleteNote(req, res, next) {
     if (result) {
       return res
         .status(200)
-        .json({ message: `Note with title ${note.title} with ID ${note._id} deleted successfully` });
+        .json({
+          message: `Note with title ${note.title} with ID ${note._id} deleted successfully`
+        });
     }
     return res.status(400).json({ message: "Failed to delete note" });
   } catch (err) {
